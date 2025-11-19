@@ -5,65 +5,90 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const navItems = [
-  { label: "Job Board", path: "/job-board" },
-  { label: "Applications", path: "/applications" },
-  { label: "History", path: "/history" },
-  { label: "About Us", path: "/about" },
-  { label: "Settings", path: "/settings" },
-  { label: "Contact", path: "/contact" },
-  { label: "Profile", path: "/profile" },
-];
+interface TopNavProps {
+  isPublic?: boolean;
+}
 
-export default function TopNav() {
+export default function TopNav({ isPublic = false }: TopNavProps) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      toast.error("Gagal logout");
+      toast.error("Logout failed");
     } else {
-      toast.success("Berhasil logout");
+      toast.success("Successfully logged out");
     }
   };
+
+  const publicNavItems = [
+    { to: "/", label: "Home" },
+    { to: "/lowongan", label: "Careers" },
+    { to: "/tentang-kami", label: "About Us" },
+    { to: "/kontak-kami", label: "Contact" },
+  ];
+
+  const authNavItems = [
+    { to: "/job-board", label: "Job Board" },
+    { to: "/applications", label: "Applications" },
+    { to: "/history", label: "History" },
+    { to: "/settings", label: "Settings" },
+    { to: "/contact", label: "Contact" },
+    { to: "/profile", label: "Profile" },
+  ];
+
+  const navItems = isPublic ? publicNavItems : authNavItems;
 
   return (
     <nav className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/95">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center">
-            <div className="text-2xl font-bold text-byd-green">BYD</div>
-          </div>
+          <Link to="/" className="flex items-center">
+            <div className="text-2xl font-bold text-primary">BYD HAKA</div>
+          </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <Link
-                key={item.path}
-                to={item.path}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  location.pathname === item.path
-                    ? "bg-byd-green text-white"
-                    : "text-foreground hover:bg-muted"
+                key={item.to}
+                to={item.to}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  location.pathname === item.to
+                    ? "text-primary"
+                    : "text-foreground"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
-          </div>
-
-          {/* Desktop Logout */}
-          <div className="hidden md:flex">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-destructive hover:bg-destructive/10"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
+            {isPublic ? (
+              <>
+                <Link
+                  to="/auth?mode=register"
+                  className="text-sm font-medium transition-colors hover:text-primary text-foreground"
+                >
+                  Register
+                </Link>
+                <Link
+                  to="/auth"
+                  className="text-sm font-medium transition-colors hover:text-primary text-foreground"
+                >
+                  Login
+                </Link>
+              </>
+            ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="text-destructive hover:bg-destructive/10"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,28 +109,47 @@ export default function TopNav() {
             <div className="space-y-1">
               {navItems.map((item) => (
                 <Link
-                  key={item.path}
-                  to={item.path}
+                  key={item.to}
+                  to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    location.pathname === item.path
-                      ? "bg-byd-green text-white"
+                    location.pathname === item.to
+                      ? "bg-primary text-primary-foreground"
                       : "text-foreground hover:bg-muted"
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
+              {isPublic ? (
+                <>
+                  <Link
+                    to="/auth?mode=register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                  >
+                    Register
+                  </Link>
+                  <Link
+                    to="/auth"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-4 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                  >
+                    Login
+                  </Link>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              )}
             </div>
           </div>
         )}
