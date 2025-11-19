@@ -93,8 +93,8 @@ const Index = () => {
       <TopNav />
 
       <div className="flex">
-        {/* Left Sidebar - Filters */}
-        <div className="hidden md:block">
+        {/* Left Sidebar - Filters - Sticky */}
+        <div className="hidden md:block sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
           <FilterSidebar
             selectedProvince={filters.province}
             selectedBranch={filters.branch}
