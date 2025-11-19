@@ -26,8 +26,9 @@ export function JobHeader({ userName = "User" }: JobHeaderProps) {
     <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 sticky top-0 z-30 backdrop-blur-sm bg-card/80">
       <div className="flex items-center gap-2 animate-fade-in">
         <h2 className="text-lg font-semibold text-foreground">
-          {greeting()}, <span className="text-primary">{userName}</span>
+          Hello, <span className="text-primary">{userName}</span>
         </h2>
+        <p className="text-sm text-muted-foreground">• {greeting()}</p>
       </div>
 
       <div className="flex items-center gap-3">

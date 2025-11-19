@@ -99,7 +99,7 @@ export default function Landing() {
 
             {/* Job Listings */}
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Lowongan Terbuka</h2>
+              <h2 className="text-2xl font-semibold mb-4">Open Positions</h2>
               {filteredJobs.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {filteredJobs.map((job) => (
@@ -117,7 +117,7 @@ export default function Landing() {
               ) : (
                 <div className="text-center py-12">
                   <Briefcase className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">Tidak ada lowongan yang sesuai dengan filter Anda.</p>
+                  <p className="text-muted-foreground">No positions match your filter criteria.</p>
                 </div>
               )}
             </section>
