@@ -6,9 +6,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const navItems = [
-  { label: "Job Board", path: "/" },
+  { label: "Job Board", path: "/job-board" },
   { label: "Applications", path: "/applications" },
   { label: "History", path: "/history" },
+  { label: "About Us", path: "/about" },
   { label: "Settings", path: "/settings" },
   { label: "Contact", path: "/contact" },
   { label: "Profile", path: "/profile" },
