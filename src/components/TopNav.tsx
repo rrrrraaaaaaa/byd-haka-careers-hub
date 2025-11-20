@@ -31,18 +31,13 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
 
   const authNavItems = [
     { to: "/job-board", label: "Job Board" },
-    { to: "/applications", label: "Applications" },
-    { to: "/history", label: "History" },
-    { to: "/settings", label: "Settings" },
-    { to: "/contact", label: "Contact" },
-    { to: "/profile", label: "Profile" },
   ];
 
   const navItems = isPublic ? publicNavItems : authNavItems;
 
   return (
     <nav className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/95">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
@@ -50,7 +45,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4 lg:gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.to}
@@ -85,6 +80,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
                 size="icon"
                 onClick={handleLogout}
                 className="text-destructive hover:bg-destructive/10"
+                title="Logout"
               >
                 <LogOut className="h-5 w-5" />
               </Button>
