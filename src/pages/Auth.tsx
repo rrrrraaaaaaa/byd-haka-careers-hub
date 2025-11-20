@@ -130,7 +130,7 @@ export default function Auth() {
     <div className="min-h-screen bg-background">
       <TopNav isPublic={true} />
       
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-md space-y-6">
           <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold text-primary">

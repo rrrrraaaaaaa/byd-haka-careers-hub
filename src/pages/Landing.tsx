@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { JobCard } from "@/components/JobCard";
 import FilterSidebar from "@/components/FilterSidebar";
 import TopNav from "@/components/TopNav";
-import { WelcomeBanner } from "@/components/WelcomeBanner";
-import { JobHeader } from "@/components/JobHeader";
 import { jobsData } from "@/data/jobsData";
 import { Briefcase } from "lucide-react";
 
@@ -58,11 +56,11 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TopNav />
+      <TopNav isPublic={true} />
       
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         {/* Desktop Sidebar - Sticky */}
-        <aside className="hidden lg:block w-64 sticky top-0 h-screen overflow-y-auto border-r border-border">
+        <aside className="hidden lg:block w-64 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] overflow-y-auto border-r border-border">
           <FilterSidebar
             selectedProvince={filters.province}
             selectedBranch={filters.branch}
@@ -77,10 +75,12 @@ export default function Landing() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 md:p-6">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <JobHeader />
-            <WelcomeBanner />
+        <main className="flex-1 w-full p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+            <div className="mb-4 sm:mb-6">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Open Positions</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Browse our currently available job openings</p>
+            </div>
 
             {/* Mobile Filter Sidebar */}
             <div className="lg:hidden">
@@ -99,9 +99,8 @@ export default function Landing() {
 
             {/* Job Listings */}
             <section>
-              <h2 className="text-2xl font-semibold mb-4">Open Positions</h2>
               {filteredJobs.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                   {filteredJobs.map((job) => (
                     <JobCard 
                       key={job.id} 
@@ -116,8 +115,8 @@ export default function Landing() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Briefcase className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">No positions match your filter criteria.</p>
+                  <Briefcase className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mb-4" />
+                  <p className="text-sm sm:text-base text-muted-foreground">No positions match your filter criteria.</p>
                 </div>
               )}
             </section>
