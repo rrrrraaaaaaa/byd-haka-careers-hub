@@ -148,7 +148,7 @@ export default function About() {
           <div className="absolute bottom-20 right-20 w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-5xl lg:text-7xl font-bold text-white text-center lg:text-left">
+          <h2 className="text-3xl lg:text-5xl font-bold text-white text-center lg:text-left">
             DIVERSIFICATION
           </h2>
         </div>

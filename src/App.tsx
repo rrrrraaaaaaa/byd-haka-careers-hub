@@ -9,6 +9,7 @@ import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
+import ApplicationForm from "./pages/ApplicationForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,8 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/lowongan" element={<Landing />} />
           <Route path="/job-board" element={<Index />} />
+          <Route path="/dashboard" element={<Index />} />
+          <Route path="/application-form" element={<ApplicationForm />} />
           <Route path="/tentang-kami" element={<About />} />
           <Route path="/kontak-kami" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
