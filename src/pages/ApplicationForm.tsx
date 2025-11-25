@@ -6,8 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
+import { jobsData } from "@/data/jobsData";
 
 export default function ApplicationForm() {
   const navigate = useNavigate();
@@ -55,19 +58,60 @@ export default function ApplicationForm() {
 
           <CardContent className="p-6 lg:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Job Position Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Lowongan Tersedia</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="position">Pilih Posisi *</Label>
+                  <Select required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih posisi yang Anda lamar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {jobsData.filter(job => job.isOpen).map((job) => (
+                        <SelectItem key={job.id} value={`${job.position} - ${job.branch}`}>
+                          {job.position} - {job.branch}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Job Information Source */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="jobSource">Dari mana Anda mendapatkan informasi loker ini? *</Label>
+                  <Select required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih sumber informasi" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      <SelectItem value="instagram">Instagram</SelectItem>
+                      <SelectItem value="tiktok">Tiktok</SelectItem>
+                      <SelectItem value="website">Website Career</SelectItem>
+                      <SelectItem value="referral">Referensi</SelectItem>
+                      <SelectItem value="other">Yang lain</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               {/* Personal Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
+                <h3 className="text-lg font-semibold text-foreground">Informasi Pribadi</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name *</Label>
-                    <Input id="fullName" placeholder="Enter your full name" required />
+                    <Label htmlFor="fullName">Nama Lengkap *</Label>
+                    <Input id="fullName" placeholder="Masukkan nama lengkap Anda" required />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="nik">NIK (National ID) *</Label>
-                    <Input id="nik" placeholder="Enter your NIK" required />
+                    <Input id="nik" placeholder="Masukkan NIK Anda" required />
                   </div>
                 </div>
 
@@ -78,80 +122,143 @@ export default function ApplicationForm() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone">Nomor Telepon *</Label>
                     <Input id="phone" type="tel" placeholder="+62 xxx xxxx xxxx" required />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Address *</Label>
-                  <Textarea id="address" placeholder="Enter your complete address" required />
+                  <Label htmlFor="domicile">Alamat Domisili *</Label>
+                  <Input 
+                    id="domicile" 
+                    placeholder="Kota dan Provinsi (Cth. Magelang-Jawa Tengah, Banjarmasin-Kalimantan Selatan)" 
+                    required 
+                  />
                 </div>
-              </div>
 
-              {/* Education */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Education</h3>
-                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="education">Last Education *</Label>
-                    <Input id="education" placeholder="e.g., Bachelor's Degree" required />
+                    <Label htmlFor="age">Usia *</Label>
+                    <Input 
+                      id="age" 
+                      type="number" 
+                      placeholder="Angka saja dalam Tahun" 
+                      min="17" 
+                      max="65" 
+                      required 
+                    />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <Label htmlFor="major">Major/Field of Study *</Label>
-                    <Input id="major" placeholder="e.g., Business Administration" required />
+                    <Label>Jenis Kelamin *</Label>
+                    <RadioGroup required>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="male" id="male" />
+                        <Label htmlFor="male" className="font-normal cursor-pointer">Laki-Laki</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="female" id="female" />
+                        <Label htmlFor="female" className="font-normal cursor-pointer">Perempuan</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="institution">Institution Name *</Label>
-                  <Input id="institution" placeholder="University/School name" required />
+                  <Label htmlFor="expectedSalary">Gaji yang diharapkan *</Label>
+                  <Input 
+                    id="expectedSalary" 
+                    placeholder="Cth. 5.500.000, 6.200.000, 7.500.000 dst........" 
+                    required 
+                  />
                 </div>
               </div>
 
               {/* Work Experience */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Work Experience</h3>
+                <h3 className="text-lg font-semibold text-foreground">Pengalaman Kerja</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastPosition">Last Position</Label>
-                  <Input id="lastPosition" placeholder="Your last job title" />
+                  <Label>Memiliki pengalaman di bidang otomotif *</Label>
+                  <RadioGroup required>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="expYes" />
+                      <Label htmlFor="expYes" className="font-normal cursor-pointer">YA</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="expNo" />
+                      <Label htmlFor="expNo" className="font-normal cursor-pointer">TIDAK</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="lastCompany">Last Company</Label>
-                  <Input id="lastCompany" placeholder="Company name" />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="yearsExp">Years of Experience</Label>
-                    <Input id="yearsExp" type="number" placeholder="0" min="0" />
-                  </div>
+                  <Label htmlFor="yearsExp">Berapa lama pengalaman kerja yang sesuai dengan posisi yang Anda lamar *</Label>
+                  <Select required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih lama pengalaman" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="<1">&lt;1 Tahun</SelectItem>
+                      <SelectItem value="1-3">1-3 Tahun</SelectItem>
+                      <SelectItem value="3-5">3-5 Tahun</SelectItem>
+                      <SelectItem value=">5">&gt;5 Tahun</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
-              {/* Additional Information */}
+              {/* Education */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Additional Information</h3>
+                <h3 className="text-lg font-semibold text-foreground">Pendidikan</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="motivation">Why do you want to join BYD Haka? *</Label>
-                  <Textarea 
-                    id="motivation" 
-                    placeholder="Tell us about your motivation..." 
-                    rows={4}
+                  <Label htmlFor="education">Pendidikan Terakhir *</Label>
+                  <Select required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Pilih pendidikan terakhir" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sma">SMA / SMK</SelectItem>
+                      <SelectItem value="d3">D3</SelectItem>
+                      <SelectItem value="s1">S1</SelectItem>
+                      <SelectItem value="s2">S2</SelectItem>
+                      <SelectItem value="s3">S3</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Document Upload */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Dokumen</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="cv">Silahkan Upload CV terbaru Anda *</Label>
+                  <Input 
+                    id="cv" 
+                    type="file" 
+                    accept=".pdf" 
                     required 
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Upload 1 file yang didukung: PDF. Maks 100 MB.
+                  </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cv">Upload CV/Resume *</Label>
-                  <Input id="cv" type="file" accept=".pdf,.doc,.docx" required />
+                  <Label htmlFor="paklaring">Silahkan Upload Paklaring (Surat keterangan pernah bekerja) terbaru Anda *</Label>
+                  <Input 
+                    id="paklaring" 
+                    type="file" 
+                    accept=".pdf" 
+                    required 
+                  />
                   <p className="text-xs text-muted-foreground">
-                    Accepted formats: PDF, DOC, DOCX (Max 5MB)
+                    *Bagi fresh graduate dan yang pertama kali bekerja bisa dilampirkan Ijazah / SKL
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Upload 1 file yang didukung: PDF. Maks 100 MB.
                   </p>
                 </div>
               </div>
