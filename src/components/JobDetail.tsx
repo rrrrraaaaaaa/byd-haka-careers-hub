@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getJobDescription } from "@/data/jobDescriptions";
 
 interface JobDetailProps {
   position: string;
@@ -11,6 +12,7 @@ interface JobDetailProps {
 }
 
 export function JobDetail({ position, branch, location, onBack, onApply }: JobDetailProps) {
+  const jobInfo = getJobDescription(position);
   return (
     <div className="animate-fade-in">
       <Button
@@ -61,18 +63,20 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
           {/* Job Description */}
           <div>
             <h3 className="text-lg font-bold text-primary mb-3">Deskripsi Pekerjaan</h3>
-            <p className="text-muted-foreground leading-relaxed">
-              Memastikan tercapainya target melalui penjualan kendaraan BYD sesuai prosedur, 
-              yang didukung oleh pelayanan sesuai standar perusahaan serta kelengkapan dokumen kendaraan
-            </p>
+            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+              {jobInfo.description.map((desc, index) => (
+                <li key={index}>{desc}</li>
+              ))}
+            </ul>
           </div>
 
           {/* Benefits */}
           <div>
             <h3 className="text-lg font-bold text-primary mb-3">Benefit</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Jenjang Karir</li>
-              <li>Insentif & Bonus</li>
+              {jobInfo.benefits.map((benefit, index) => (
+                <li key={index}>{benefit}</li>
+              ))}
             </ul>
           </div>
 
@@ -80,42 +84,20 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
           <div>
             <h3 className="text-lg font-bold text-primary mb-3">Kualifikasi Umum</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Usia maksimal 27 tahun</li>
-              <li>Pend. min D3 atau SMA berpengalaman. Fresh graduate diperbolehkan melamar</li>
+              {jobInfo.generalQualifications.map((qual, index) => (
+                <li key={index}>{qual}</li>
+              ))}
             </ul>
           </div>
 
           {/* Specific Qualifications */}
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Kualifikasi khusus</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">Kualifikasi Khusus</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Memiliki passion di bidang penjualan</li>
-              <li>Berpenampilan menarik</li>
-              <li>Memiliki kemampuan menjalin relasi dan analisa yang baik</li>
-              <li>Memiliki kemampuan mengoperasikan Microsoft Office</li>
-              <li>Diutamakan berdomisili di wilayah penempatan dan sekitarnya. (Pelamar diluar area tsb, silahkan cek kembali lowongan yang sesuai dengan kota/ domisili Anda.</li>
+              {jobInfo.specificQualifications.map((qual, index) => (
+                <li key={index}>{qual}</li>
+              ))}
             </ul>
-          </div>
-
-          {/* Facilities & Benefits */}
-          <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Fasilitas & Tunjangan</h3>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>BPJS Ketenagakerjaan</li>
-              <li>BPJS Kesehatan</li>
-              <li>Tunjangan Makan</li>
-              <li>Tunjangan Transportasi</li>
-            </ul>
-          </div>
-
-          {/* Job Level */}
-          <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Level jabatan : OJT</h3>
-          </div>
-
-          {/* Deadline */}
-          <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Batas akhir pengumuman : 2025-11-30</h3>
           </div>
 
           {/* Apply Button */}
