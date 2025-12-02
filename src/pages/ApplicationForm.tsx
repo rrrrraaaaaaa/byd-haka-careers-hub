@@ -54,27 +54,6 @@ export default function ApplicationForm() {
 
           <CardContent className="p-6 lg:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Job Position Selection */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Lowongan Tersedia</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="position">Pilih Posisi *</Label>
-                  <Select required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih posisi yang Anda lamar" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {jobsData.filter(job => job.isOpen).map((job) => (
-                        <SelectItem key={job.id} value={`${job.position} - ${job.branch}`}>
-                          {job.position} - {job.branch}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
               {/* Job Information Source */}
               <div className="space-y-4">
                 <div className="space-y-2">
