@@ -23,12 +23,8 @@ export default function ApplicationForm() {
 
     // Simulate form submission
     setTimeout(() => {
-      toast({
-        title: "Application Submitted",
-        description: "Your application has been submitted successfully!",
-      });
       setIsSubmitting(false);
-      navigate("/dashboard");
+      navigate("/application-success");
     }, 2000);
   };
 
