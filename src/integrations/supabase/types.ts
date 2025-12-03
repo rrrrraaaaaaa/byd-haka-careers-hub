@@ -145,9 +145,15 @@ export type Database = {
       app_role: "admin" | "user"
       application_status:
         | "submitted"
-        | "under_review"
-        | "interview_scheduled"
-        | "interview_completed"
+        | "on_review"
+        | "interview_hc"
+        | "interview_user"
+        | "psikotes"
+        | "test_bidang"
+        | "assessment"
+        | "background_check"
+        | "offering"
+        | "onboarding"
         | "accepted"
         | "rejected"
     }
@@ -280,9 +286,15 @@ export const Constants = {
       app_role: ["admin", "user"],
       application_status: [
         "submitted",
-        "under_review",
-        "interview_scheduled",
-        "interview_completed",
+        "on_review",
+        "interview_hc",
+        "interview_user",
+        "psikotes",
+        "test_bidang",
+        "assessment",
+        "background_check",
+        "offering",
+        "onboarding",
         "accepted",
         "rejected",
       ],
