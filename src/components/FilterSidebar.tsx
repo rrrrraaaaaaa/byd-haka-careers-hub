@@ -35,18 +35,18 @@ export default function FilterSidebar({
     <aside className="w-full md:w-64 bg-card border-r border-border p-6 space-y-6 h-full">
       <div className="flex items-center gap-2 mb-6">
         <Filter className="h-5 w-5 text-byd-green" />
-        <h2 className="text-lg font-semibold">Filter Lowongan</h2>
+        <h2 className="text-lg font-semibold">Filter Jobs</h2>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="province-filter">Provinsi</Label>
+          <Label htmlFor="province-filter">Province</Label>
           <Select value={selectedProvince} onValueChange={onProvinceChange}>
             <SelectTrigger id="province-filter" className="transition-all hover:border-byd-green">
-              <SelectValue placeholder="Semua Provinsi" />
+              <SelectValue placeholder="All Provinces" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Provinsi</SelectItem>
+              <SelectItem value="all">All Provinces</SelectItem>
               {provinces.map((province) => (
                 <SelectItem key={province} value={province}>
                   {province}
@@ -57,13 +57,13 @@ export default function FilterSidebar({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="branch-filter">Cabang/Dealer</Label>
+          <Label htmlFor="branch-filter">Branch/Dealer</Label>
           <Select value={selectedBranch} onValueChange={onBranchChange}>
             <SelectTrigger id="branch-filter" className="transition-all hover:border-byd-green">
-              <SelectValue placeholder="Semua Cabang" />
+              <SelectValue placeholder="All Branches" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Cabang</SelectItem>
+              <SelectItem value="all">All Branches</SelectItem>
               {branches.map((branch) => (
                 <SelectItem key={branch} value={branch}>
                   {branch}
@@ -74,13 +74,13 @@ export default function FilterSidebar({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="position-filter">Posisi</Label>
+          <Label htmlFor="position-filter">Position</Label>
           <Select value={selectedPosition} onValueChange={onPositionChange}>
             <SelectTrigger id="position-filter" className="transition-all hover:border-byd-green">
-              <SelectValue placeholder="Semua Posisi" />
+              <SelectValue placeholder="All Positions" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Posisi</SelectItem>
+              <SelectItem value="all">All Positions</SelectItem>
               {positions.map((position) => (
                 <SelectItem key={position} value={position}>
                   {position}
