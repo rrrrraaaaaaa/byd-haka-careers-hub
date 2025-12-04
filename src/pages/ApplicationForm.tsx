@@ -4,7 +4,6 @@ import TopNav from "@/components/TopNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -57,18 +56,18 @@ export default function ApplicationForm() {
               {/* Job Information Source */}
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="jobSource">Dari mana Anda mendapatkan informasi loker ini? *</Label>
+                  <Label htmlFor="jobSource">How did you find out about this job? *</Label>
                   <Select required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih sumber informasi" />
+                      <SelectValue placeholder="Select information source" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="linkedin">LinkedIn</SelectItem>
                       <SelectItem value="instagram">Instagram</SelectItem>
-                      <SelectItem value="tiktok">Tiktok</SelectItem>
-                      <SelectItem value="website">Website Career</SelectItem>
-                      <SelectItem value="referral">Referensi</SelectItem>
-                      <SelectItem value="other">Yang lain</SelectItem>
+                      <SelectItem value="tiktok">TikTok</SelectItem>
+                      <SelectItem value="website">Career Website</SelectItem>
+                      <SelectItem value="referral">Referral</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -76,17 +75,17 @@ export default function ApplicationForm() {
 
               {/* Personal Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Informasi Pribadi</h3>
+                <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Nama Lengkap *</Label>
-                    <Input id="fullName" placeholder="Masukkan nama lengkap Anda" required />
+                    <Label htmlFor="fullName">Full Name *</Label>
+                    <Input id="fullName" placeholder="Enter your full name" required />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="nik">NIK (National ID) *</Label>
-                    <Input id="nik" placeholder="Masukkan NIK Anda" required />
+                    <Input id="nik" placeholder="Enter your NIK" required />
                   </div>
                 </div>
 
@@ -97,27 +96,27 @@ export default function ApplicationForm() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Nomor Telepon *</Label>
+                    <Label htmlFor="phone">Phone Number *</Label>
                     <Input id="phone" type="tel" placeholder="+62 xxx xxxx xxxx" required />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="domicile">Alamat Domisili *</Label>
+                  <Label htmlFor="domicile">Residential Address *</Label>
                   <Input 
                     id="domicile" 
-                    placeholder="Kota dan Provinsi (Cth. Magelang-Jawa Tengah, Banjarmasin-Kalimantan Selatan)" 
+                    placeholder="City and Province (e.g., Jakarta-DKI Jakarta, Surabaya-East Java)" 
                     required 
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="age">Usia *</Label>
+                    <Label htmlFor="age">Age *</Label>
                     <Input 
                       id="age" 
                       type="number" 
-                      placeholder="Angka saja dalam Tahun" 
+                      placeholder="Enter your age in years" 
                       min="17" 
                       max="65" 
                       required 
@@ -125,25 +124,25 @@ export default function ApplicationForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Jenis Kelamin *</Label>
+                    <Label>Gender *</Label>
                     <RadioGroup required>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="male" id="male" />
-                        <Label htmlFor="male" className="font-normal cursor-pointer">Laki-Laki</Label>
+                        <Label htmlFor="male" className="font-normal cursor-pointer">Male</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="female" id="female" />
-                        <Label htmlFor="female" className="font-normal cursor-pointer">Perempuan</Label>
+                        <Label htmlFor="female" className="font-normal cursor-pointer">Female</Label>
                       </div>
                     </RadioGroup>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="expectedSalary">Gaji yang diharapkan *</Label>
+                  <Label htmlFor="expectedSalary">Expected Salary *</Label>
                   <Input 
                     id="expectedSalary" 
-                    placeholder="Cth. 5.500.000, 6.200.000, 7.500.000 dst........" 
+                    placeholder="e.g., 5,500,000 / 6,200,000 / 7,500,000" 
                     required 
                   />
                 </div>
@@ -151,33 +150,33 @@ export default function ApplicationForm() {
 
               {/* Work Experience */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Pengalaman Kerja</h3>
+                <h3 className="text-lg font-semibold text-foreground">Work Experience</h3>
                 
                 <div className="space-y-2">
-                  <Label>Memiliki pengalaman di bidang otomotif *</Label>
+                  <Label>Do you have experience in the automotive industry? *</Label>
                   <RadioGroup required>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="expYes" />
-                      <Label htmlFor="expYes" className="font-normal cursor-pointer">YA</Label>
+                      <Label htmlFor="expYes" className="font-normal cursor-pointer">Yes</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="expNo" />
-                      <Label htmlFor="expNo" className="font-normal cursor-pointer">TIDAK</Label>
+                      <Label htmlFor="expNo" className="font-normal cursor-pointer">No</Label>
                     </div>
                   </RadioGroup>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="yearsExp">Berapa lama pengalaman kerja yang sesuai dengan posisi yang Anda lamar *</Label>
+                  <Label htmlFor="yearsExp">How long is your relevant work experience for this position? *</Label>
                   <Select required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih lama pengalaman" />
+                      <SelectValue placeholder="Select experience duration" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="<1">&lt;1 Tahun</SelectItem>
-                      <SelectItem value="1-3">1-3 Tahun</SelectItem>
-                      <SelectItem value="3-5">3-5 Tahun</SelectItem>
-                      <SelectItem value=">5">&gt;5 Tahun</SelectItem>
+                      <SelectItem value="<1">&lt;1 Year</SelectItem>
+                      <SelectItem value="1-3">1-3 Years</SelectItem>
+                      <SelectItem value="3-5">3-5 Years</SelectItem>
+                      <SelectItem value=">5">&gt;5 Years</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -185,20 +184,20 @@ export default function ApplicationForm() {
 
               {/* Education */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Pendidikan</h3>
+                <h3 className="text-lg font-semibold text-foreground">Education</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="education">Pendidikan Terakhir *</Label>
+                  <Label htmlFor="education">Highest Education Level *</Label>
                   <Select required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih pendidikan terakhir" />
+                      <SelectValue placeholder="Select education level" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="sma">SMA / SMK</SelectItem>
-                      <SelectItem value="d3">D3</SelectItem>
-                      <SelectItem value="s1">S1</SelectItem>
-                      <SelectItem value="s2">S2</SelectItem>
-                      <SelectItem value="s3">S3</SelectItem>
+                      <SelectItem value="sma">High School / Vocational</SelectItem>
+                      <SelectItem value="d3">Diploma (D3)</SelectItem>
+                      <SelectItem value="s1">Bachelor's Degree (S1)</SelectItem>
+                      <SelectItem value="s2">Master's Degree (S2)</SelectItem>
+                      <SelectItem value="s3">Doctoral Degree (S3)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -206,10 +205,10 @@ export default function ApplicationForm() {
 
               {/* Document Upload */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Dokumen</h3>
+                <h3 className="text-lg font-semibold text-foreground">Documents</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="cv">Silahkan Upload CV terbaru Anda *</Label>
+                  <Label htmlFor="cv">Please upload your latest CV *</Label>
                   <Input 
                     id="cv" 
                     type="file" 
@@ -217,12 +216,12 @@ export default function ApplicationForm() {
                     required 
                   />
                   <p className="text-xs text-muted-foreground">
-                    Upload 1 file yang didukung: PDF. Maks 100 MB.
+                    Upload 1 supported file: PDF. Max 100 MB.
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="paklaring">Silahkan Upload Paklaring (Surat keterangan pernah bekerja) terbaru Anda *</Label>
+                  <Label htmlFor="paklaring">Please upload your Employment Certificate *</Label>
                   <Input 
                     id="paklaring" 
                     type="file" 
@@ -230,10 +229,10 @@ export default function ApplicationForm() {
                     required 
                   />
                   <p className="text-xs text-muted-foreground">
-                    *Bagi fresh graduate dan yang pertama kali bekerja bisa dilampirkan Ijazah / SKL
+                    *For fresh graduates or first-time workers, please attach your Diploma or Graduation Letter
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Upload 1 file yang didukung: PDF. Maks 100 MB.
+                    Upload 1 supported file: PDF. Max 100 MB.
                   </p>
                 </div>
               </div>

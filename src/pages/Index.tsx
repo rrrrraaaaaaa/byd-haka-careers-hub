@@ -19,9 +19,9 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
   const [filters, setFilters] = useState({
-    province: "All Provinsi",
-    branch: "All Cabang",
-    position: "All Posisi",
+    province: "All Provinces",
+    branch: "All Branches",
+    position: "All Positions",
   });
 
   useEffect(() => {
@@ -44,11 +44,11 @@ const Index = () => {
   const filteredJobs = useMemo(() => {
     return jobsData.filter((job) => {
       const matchProvince =
-        filters.province === "All Provinsi" || job.province === filters.province;
+        filters.province === "All Provinces" || job.province === filters.province;
       const matchBranch =
-        filters.branch === "All Cabang" || job.branch === filters.branch;
+        filters.branch === "All Branches" || job.branch === filters.branch;
       const matchPosition =
-        filters.position === "All Posisi" || job.position === filters.position;
+        filters.position === "All Positions" || job.position === filters.position;
 
       return matchProvince && matchBranch && matchPosition;
     });
@@ -118,7 +118,7 @@ const Index = () => {
     "Sumatera Utara"
   ];
   const branches = useMemo(() => {
-    if (filters.province === "All Provinsi") {
+    if (filters.province === "All Provinces") {
       return Array.from(new Set(jobsData.map((job) => job.branch))).sort();
     }
     return Array.from(
@@ -155,7 +155,7 @@ const Index = () => {
             selectedProvince={filters.province}
             selectedBranch={filters.branch}
             selectedPosition={filters.position}
-            onProvinceChange={(value) => setFilters({ ...filters, province: value, branch: "All Cabang" })}
+            onProvinceChange={(value) => setFilters({ ...filters, province: value, branch: "All Branches" })}
             onBranchChange={(value) => setFilters({ ...filters, branch: value })}
             onPositionChange={(value) => setFilters({ ...filters, position: value })}
             provinces={provinces}
@@ -190,12 +190,12 @@ const Index = () => {
               <>
                 {/* Mobile Filters */}
                 <div className="lg:hidden space-y-4 p-4 bg-card rounded-lg border animate-fade-in">
-                  <h3 className="font-semibold text-base sm:text-lg mb-4">Filter Lowongan</h3>
+                  <h3 className="font-semibold text-base sm:text-lg mb-4">Filter Jobs</h3>
                   <FilterSidebar
                     selectedProvince={filters.province}
                     selectedBranch={filters.branch}
                     selectedPosition={filters.position}
-                    onProvinceChange={(value) => setFilters({ ...filters, province: value, branch: "All Cabang" })}
+                    onProvinceChange={(value) => setFilters({ ...filters, province: value, branch: "All Branches" })}
                     onBranchChange={(value) => setFilters({ ...filters, branch: value })}
                     onPositionChange={(value) => setFilters({ ...filters, position: value })}
                     provinces={provinces}
@@ -217,11 +217,11 @@ const Index = () => {
                     <p className="text-xs sm:text-sm text-muted-foreground">
                       Showing <span className="font-semibold text-foreground">{filteredJobs.length}</span> opportunities
                     </p>
-                    {filters.province !== "All Provinsi" && (
+                    {filters.province !== "All Provinces" && (
                       <p className="text-xs sm:text-sm text-primary font-medium">
                         Filtered by: {filters.province}
-                        {filters.branch !== "All Cabang" && ` → ${filters.branch}`}
-                        {filters.position !== "All Posisi" && ` → ${filters.position}`}
+                        {filters.branch !== "All Branches" && ` → ${filters.branch}`}
+                        {filters.position !== "All Positions" && ` → ${filters.position}`}
                       </p>
                     )}
                   </div>

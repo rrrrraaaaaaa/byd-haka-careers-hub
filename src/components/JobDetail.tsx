@@ -48,21 +48,21 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
           {/* Notice Box */}
           <div className="bg-primary/10 border-l-4 border-primary p-4 rounded-md">
             <p className="text-sm text-foreground leading-relaxed">
-              Keseluruhan proses rekrutmen & seleksi tidak memungut biaya apapun. Hanya 
-              kandidat sesuai kualifikasi yang akan diproses lebih lanjut, silahkan mengikuti 
-              perkembangan proses seleksi Anda pada website ini
+              The entire recruitment and selection process is free of charge. Only candidates 
+              who meet the qualifications will be processed further. Please track your 
+              selection progress on this website.
             </p>
           </div>
 
           {/* Job Location */}
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Lokasi Pekerjaan</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">Job Location</h3>
             <p className="text-foreground">{location}</p>
           </div>
 
           {/* Job Description */}
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Deskripsi Pekerjaan</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">Job Description</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               {jobInfo.description.map((desc, index) => (
                 <li key={index}>{desc}</li>
@@ -72,7 +72,7 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
 
           {/* Benefits */}
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Benefit</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">Benefits</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               {jobInfo.benefits.map((benefit, index) => (
                 <li key={index}>{benefit}</li>
@@ -82,7 +82,7 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
 
           {/* General Qualifications */}
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Kualifikasi Umum</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">General Qualifications</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               {jobInfo.generalQualifications.map((qual, index) => (
                 <li key={index}>{qual}</li>
@@ -92,7 +92,7 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
 
           {/* Specific Qualifications */}
           <div>
-            <h3 className="text-lg font-bold text-primary mb-3">Kualifikasi Khusus</h3>
+            <h3 className="text-lg font-bold text-primary mb-3">Specific Qualifications</h3>
             <ul className="list-disc list-inside space-y-2 text-muted-foreground">
               {jobInfo.specificQualifications.map((qual, index) => (
                 <li key={index}>{qual}</li>

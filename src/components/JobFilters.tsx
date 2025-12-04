@@ -17,7 +17,7 @@ interface JobFiltersProps {
 }
 
 const provinces = [
-  "All Provinsi",
+  "All Provinces",
   "DKI Jakarta",
   "Jawa Barat",
   "Jawa Tengah",
@@ -55,21 +55,21 @@ const provinces = [
 ];
 
 const branchesData: Record<string, string[]> = {
-  "All Provinsi": ["All Cabang"],
-  "DKI Jakarta": ["All Cabang", "BYD Jakarta Pusat", "BYD Jakarta Selatan", "BYD Jakarta Timur", "BYD Jakarta Barat", "BYD Jakarta Utara"],
-  "Jawa Barat": ["All Cabang", "BYD Bandung", "BYD Bekasi", "BYD Bogor", "BYD Depok", "BYD Cirebon"],
-  "Jawa Tengah": ["All Cabang", "BYD Semarang", "BYD Solo", "BYD Yogyakarta"],
-  "Jawa Timur": ["All Cabang", "BYD Surabaya", "BYD Malang", "BYD Sidoarjo", "BYD Gresik"],
-  "Banten": ["All Cabang", "BYD Tangerang", "BYD Serang", "BYD Cilegon"],
-  "Sumatera Utara": ["All Cabang", "BYD Medan", "BYD Pematang Siantar"],
-  "Sumatera Barat": ["All Cabang", "BYD Padang", "BYD Bukittinggi"],
-  "Sumatera Selatan": ["All Cabang", "BYD Palembang"],
-  "Bali": ["All Cabang", "BYD Denpasar", "BYD Gianyar"],
-  "Kalimantan Timur": ["All Cabang", "BYD Balikpapan", "BYD Samarinda"],
+  "All Provinces": ["All Branches"],
+  "DKI Jakarta": ["All Branches", "BYD Jakarta Pusat", "BYD Jakarta Selatan", "BYD Jakarta Timur", "BYD Jakarta Barat", "BYD Jakarta Utara"],
+  "Jawa Barat": ["All Branches", "BYD Bandung", "BYD Bekasi", "BYD Bogor", "BYD Depok", "BYD Cirebon"],
+  "Jawa Tengah": ["All Branches", "BYD Semarang", "BYD Solo", "BYD Yogyakarta"],
+  "Jawa Timur": ["All Branches", "BYD Surabaya", "BYD Malang", "BYD Sidoarjo", "BYD Gresik"],
+  "Banten": ["All Branches", "BYD Tangerang", "BYD Serang", "BYD Cilegon"],
+  "Sumatera Utara": ["All Branches", "BYD Medan", "BYD Pematang Siantar"],
+  "Sumatera Barat": ["All Branches", "BYD Padang", "BYD Bukittinggi"],
+  "Sumatera Selatan": ["All Branches", "BYD Palembang"],
+  "Bali": ["All Branches", "BYD Denpasar", "BYD Gianyar"],
+  "Kalimantan Timur": ["All Branches", "BYD Balikpapan", "BYD Samarinda"],
 };
 
 const positions = [
-  "All Posisi",
+  "All Positions",
   "Branch Manager",
   "Sales Supervisor",
   "Sales Executive",
@@ -82,26 +82,26 @@ const positions = [
   "Accounting",
   "Service Manager",
   "Service Advisor",
-  "Mekanik",
+  "Mechanic",
   "Stock Management",
   "Partman",
   "Customer Relation Officer",
   "Marketing Specialist",
-  "Personalisasi & GA",
+  "HR & GA",
   "In-House Trainer",
 ];
 
 export function JobFilters({ onFilterChange }: JobFiltersProps) {
-  const [selectedProvince, setSelectedProvince] = useState("All Provinsi");
-  const [selectedBranch, setSelectedBranch] = useState("All Cabang");
-  const [selectedPosition, setSelectedPosition] = useState("All Posisi");
+  const [selectedProvince, setSelectedProvince] = useState("All Provinces");
+  const [selectedBranch, setSelectedBranch] = useState("All Branches");
+  const [selectedPosition, setSelectedPosition] = useState("All Positions");
 
   const handleProvinceChange = (value: string) => {
     setSelectedProvince(value);
-    setSelectedBranch("All Cabang");
+    setSelectedBranch("All Branches");
     onFilterChange({
       province: value,
-      branch: "All Cabang",
+      branch: "All Branches",
       position: selectedPosition,
     });
   };
@@ -124,7 +124,7 @@ export function JobFilters({ onFilterChange }: JobFiltersProps) {
     });
   };
 
-  const availableBranches = branchesData[selectedProvince] || ["All Cabang"];
+  const availableBranches = branchesData[selectedProvince] || ["All Branches"];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-slide-in-right">
@@ -132,11 +132,11 @@ export function JobFilters({ onFilterChange }: JobFiltersProps) {
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground flex items-center gap-2">
           <MapPin className="h-4 w-4 text-primary" />
-          Provinsi
+          Province
         </label>
         <Select value={selectedProvince} onValueChange={handleProvinceChange}>
           <SelectTrigger className="w-full bg-card hover:bg-muted transition-colors">
-            <SelectValue placeholder="Pilih Provinsi" />
+            <SelectValue placeholder="Select Province" />
           </SelectTrigger>
           <SelectContent className="max-h-80 bg-popover">
             {provinces.map((province) => (
@@ -152,11 +152,11 @@ export function JobFilters({ onFilterChange }: JobFiltersProps) {
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground flex items-center gap-2">
           <Building2 className="h-4 w-4 text-primary" />
-          Cabang
+          Branch
         </label>
         <Select value={selectedBranch} onValueChange={handleBranchChange}>
           <SelectTrigger className="w-full bg-card hover:bg-muted transition-colors">
-            <SelectValue placeholder="Pilih Cabang" />
+            <SelectValue placeholder="Select Branch" />
           </SelectTrigger>
           <SelectContent className="bg-popover">
             {availableBranches.map((branch) => (
@@ -172,11 +172,11 @@ export function JobFilters({ onFilterChange }: JobFiltersProps) {
       <div className="space-y-2">
         <label className="text-sm font-medium text-foreground flex items-center gap-2">
           <Briefcase className="h-4 w-4 text-primary" />
-          Posisi
+          Position
         </label>
         <Select value={selectedPosition} onValueChange={handlePositionChange}>
           <SelectTrigger className="w-full bg-card hover:bg-muted transition-colors">
-            <SelectValue placeholder="Pilih Posisi" />
+            <SelectValue placeholder="Select Position" />
           </SelectTrigger>
           <SelectContent className="max-h-80 bg-popover">
             {positions.map((position) => (

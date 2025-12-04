@@ -46,7 +46,7 @@ export default function FilterSidebar({
               <SelectValue placeholder="All Provinces" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Provinces</SelectItem>
+              <SelectItem value="All Provinces">All Provinces</SelectItem>
               {provinces.map((province) => (
                 <SelectItem key={province} value={province}>
                   {province}
@@ -63,7 +63,7 @@ export default function FilterSidebar({
               <SelectValue placeholder="All Branches" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Branches</SelectItem>
+              <SelectItem value="All Branches">All Branches</SelectItem>
               {branches.map((branch) => (
                 <SelectItem key={branch} value={branch}>
                   {branch}
@@ -80,7 +80,7 @@ export default function FilterSidebar({
               <SelectValue placeholder="All Positions" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Positions</SelectItem>
+              <SelectItem value="All Positions">All Positions</SelectItem>
               {positions.map((position) => (
                 <SelectItem key={position} value={position}>
                   {position}
