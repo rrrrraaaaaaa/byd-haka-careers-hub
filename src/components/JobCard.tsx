@@ -56,7 +56,7 @@ export function JobCard({
               size="sm"
               className="group-hover:shadow-medium transition-all bg-primary hover:bg-primary-glow"
             >
-              Lihat Detail
+              View Details
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>

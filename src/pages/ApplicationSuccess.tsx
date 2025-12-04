@@ -23,23 +23,23 @@ const ApplicationSuccess = () => {
             </h1>
             
             <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
-              Terima kasih telah melamar posisi di BYD Haka. Lamaran Anda telah berhasil kami terima dan akan segera kami proses.
+              Thank you for applying for a position at BYD Haka. Your application has been received and will be processed shortly.
             </p>
             
             <div className="bg-muted/50 rounded-lg p-6 mb-8 max-w-md mx-auto">
-              <h3 className="font-semibold text-foreground mb-3">Langkah Selanjutnya:</h3>
+              <h3 className="font-semibold text-foreground mb-3">Next Steps:</h3>
               <ul className="text-sm text-muted-foreground space-y-2 text-left">
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
-                  <span>Tim HR kami akan meninjau lamaran Anda</span>
+                  <span>Our HR team will review your application</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
-                  <span>Anda akan dihubungi melalui email atau telepon jika lolos seleksi administrasi</span>
+                  <span>You will be contacted via email or phone if you pass the administrative selection</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
-                  <span>Proses seleksi membutuhkan waktu 1-2 minggu</span>
+                  <span>The selection process takes approximately 1-2 weeks</span>
                 </li>
               </ul>
             </div>

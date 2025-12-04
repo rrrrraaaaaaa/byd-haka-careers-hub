@@ -9,9 +9,9 @@ import { Briefcase } from "lucide-react";
 export default function Landing() {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
-    province: "All Provinsi",
-    branch: "All Cabang",
-    position: "All Posisi",
+    province: "All Provinces",
+    branch: "All Branches",
+    position: "All Positions",
   });
 
   // Filter only open jobs
@@ -22,9 +22,9 @@ export default function Landing() {
   // Apply filters to open jobs
   const filteredJobs = useMemo(() => {
     return openJobs.filter((job) => {
-      const provinceMatch = filters.province === "All Provinsi" || job.province === filters.province;
-      const branchMatch = filters.branch === "All Cabang" || job.branch === filters.branch;
-      const positionMatch = filters.position === "All Posisi" || job.position === filters.position;
+      const provinceMatch = filters.province === "All Provinces" || job.province === filters.province;
+      const branchMatch = filters.branch === "All Branches" || job.branch === filters.branch;
+      const positionMatch = filters.position === "All Positions" || job.position === filters.position;
       return provinceMatch && branchMatch && positionMatch;
     });
   }, [openJobs, filters]);
@@ -80,7 +80,7 @@ export default function Landing() {
     "Sumatera Utara"
   ];
   const branches = useMemo(() => {
-    if (filters.province === "All Provinsi") {
+    if (filters.province === "All Provinces") {
       return Array.from(new Set(openJobs.map((job) => job.branch))).sort();
     }
     return Array.from(
@@ -104,7 +104,7 @@ export default function Landing() {
             selectedProvince={filters.province}
             selectedBranch={filters.branch}
             selectedPosition={filters.position}
-            onProvinceChange={(province) => handleFilterChange({ ...filters, province, branch: "All Cabang" })}
+            onProvinceChange={(province) => handleFilterChange({ ...filters, province, branch: "All Branches" })}
             onBranchChange={(branch) => handleFilterChange({ ...filters, branch })}
             onPositionChange={(position) => handleFilterChange({ ...filters, position })}
             provinces={provinces}
@@ -127,7 +127,7 @@ export default function Landing() {
                 selectedProvince={filters.province}
                 selectedBranch={filters.branch}
                 selectedPosition={filters.position}
-                onProvinceChange={(province) => handleFilterChange({ ...filters, province, branch: "All Cabang" })}
+                onProvinceChange={(province) => handleFilterChange({ ...filters, province, branch: "All Branches" })}
                 onBranchChange={(branch) => handleFilterChange({ ...filters, branch })}
                 onPositionChange={(position) => handleFilterChange({ ...filters, position })}
                 provinces={provinces}
