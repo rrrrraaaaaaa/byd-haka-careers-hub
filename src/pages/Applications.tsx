@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, Building2, Calendar, Briefcase } from "lucide-react";
 import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 
 type ApplicationStatus = 
   | 'submitted'
@@ -37,10 +37,10 @@ interface Application {
 const statusLabels: Record<ApplicationStatus, string> = {
   submitted: 'Submitted',
   on_review: 'On Review',
-  interview_hc: 'Interview HC',
-  interview_user: 'Interview User',
-  psikotes: 'Psikotes',
-  test_bidang: 'Test Bidang',
+  interview_hc: 'HR Interview',
+  interview_user: 'User Interview',
+  psikotes: 'Psychological Test',
+  test_bidang: 'Technical Test',
   assessment: 'Assessment',
   background_check: 'Background Check',
   offering: 'Offering',
@@ -198,7 +198,7 @@ export default function Applications() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
-                        <span>Applied {format(new Date(app.created_at), "d MMMM yyyy", { locale: id })}</span>
+                        <span>Applied {format(new Date(app.created_at), "MMMM d, yyyy", { locale: enUS })}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -223,9 +223,9 @@ export default function Applications() {
                       </Badge>
                     </div>
                     <div className="flex gap-4 text-sm text-muted-foreground mt-3">
-                      <span>Applied: {format(new Date(selectedApplication.created_at), "d MMMM yyyy", { locale: id })}</span>
+                      <span>Applied: {format(new Date(selectedApplication.created_at), "MMMM d, yyyy", { locale: enUS })}</span>
                       <span>•</span>
-                      <span>Last Update: {format(new Date(selectedApplication.updated_at), "d MMMM yyyy", { locale: id })}</span>
+                      <span>Last Update: {format(new Date(selectedApplication.updated_at), "MMMM d, yyyy", { locale: enUS })}</span>
                     </div>
                   </CardHeader>
                   <CardContent className="p-6">

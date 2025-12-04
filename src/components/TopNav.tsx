@@ -31,6 +31,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
 
   const authNavItems = [
     { to: "/job-board", label: "Job Board" },
+    { to: "/applications", label: "Applications" },
   ];
 
   const navItems = isPublic ? publicNavItems : authNavItems;
