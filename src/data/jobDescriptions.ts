@@ -36,7 +36,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -66,7 +66,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -96,7 +96,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -124,7 +124,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -153,7 +153,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -182,7 +182,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -211,12 +211,12 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
-  "Mekanik": {
-    position: "Mekanik",
+  "Mechanic": {
+    position: "Mechanic",
     description: [
       "Perform maintenance, inspection, and repair of vehicles",
       "Ensure safety and quality aligned with standards"
@@ -230,7 +230,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
       "Ability to be adaptable, persuasive and organized"
     ],
     specificQualifications: [
-      "SMK/D3 Automotive Engineering",
+      "Vocational School/Diploma in Automotive Engineering",
       "Minimum 2 years as Mechanic",
       "Eager to learn EV technologies",
       "EV/Hybrid experience is a plus",
@@ -240,7 +240,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -269,7 +269,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -297,7 +297,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -326,7 +326,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -355,7 +355,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   },
@@ -383,7 +383,7 @@ export const jobDescriptions: Record<string, JobDescription> = {
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   }
@@ -413,8 +413,8 @@ export function getJobDescription(position: string): JobDescription {
   return {
     position: normalizedPosition,
     description: [
-      "Memastikan tercapainya target melalui penjualan kendaraan BYD sesuai prosedur",
-      "Pelayanan sesuai standar perusahaan serta kelengkapan dokumen kendaraan"
+      "Ensure achievement of targets through BYD vehicle sales according to procedures",
+      "Provide service according to company standards and complete vehicle documentation"
     ],
     generalQualifications: [
       "Effective communication skills",
@@ -425,15 +425,15 @@ export function getJobDescription(position: string): JobDescription {
       "Ability to be adaptable, persuasive and organized"
     ],
     specificQualifications: [
-      "Pend. min D3 atau SMA berpengalaman",
-      "Fresh graduate diperbolehkan melamar",
-      "Memiliki kemampuan mengoperasikan Microsoft Office",
-      "Diutamakan berdomisili di wilayah penempatan dan sekitarnya"
+      "Minimum Diploma (D3) or experienced High School graduate",
+      "Fresh graduates are welcome to apply",
+      "Proficient in Microsoft Office",
+      "Preferably residing in or near the placement area"
     ],
     benefits: [
       "Career Growth",
       "Incentives & Bonus",
-      "BPJS Kesehatan & Ketenagakerjaan",
+      "Health & Employment Insurance",
       "Meal & Transport Allowance"
     ]
   };
