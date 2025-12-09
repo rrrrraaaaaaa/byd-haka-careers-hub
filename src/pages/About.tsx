@@ -11,24 +11,23 @@ export default function About() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
-                HAKA Auto hadir dengan berbagai fasilitas yang lengkap
+                HAKA Auto delivers comprehensive facilities
               </h1>
               <div className="space-y-4 text-base lg:text-lg text-muted-foreground">
                 <p>
-                  Didirikan pada 10 Oktober 2023, PT Bumi Hijau Motor (Haka Auto) 
-                  adalah perusahaan mega dealer BYD di Indonesia, dibentuk oleh 
-                  group usaha yang berpengalaman puluhan tahun dalam industri 
-                  otomotif dan didukung oleh profesional yang telah memiliki jam 
-                  terbang tinggi di bidangnya masing-masing.
+                  Founded on October 10, 2023, PT Bumi Hijau Motor (Haka Auto) 
+                  is a BYD mega dealer company in Indonesia, formed by a business 
+                  group with decades of experience in the automotive industry 
+                  and supported by professionals with extensive expertise in 
+                  their respective fields.
                 </p>
                 <p>
-                  Sebagai bentuk komitmen untuk memberikan pelayanan terbaik 
-                  bagi masyarakat, Haka Auto akan terus membangun dan 
-                  mengoperasikan puluhan cabang dealer secara bertahap di seluruh 
-                  kota besar di Jabodetabek, Pulau Jawa, Kalimantan, Sulawesi hingga 
-                  wilayah Timur Indonesia. Meliputi fasilitas dealership 3S+ (sales, 
-                  service, spare parts, EV Charging Station) dan fasilitas pendukung 
-                  lainnya untuk kenyamanan Masyarakat.
+                  As a commitment to providing the best service to the community, 
+                  Haka Auto will continue to build and operate dozens of dealer 
+                  branches gradually across major cities in Greater Jakarta, Java, 
+                  Kalimantan, Sulawesi, and Eastern Indonesia. This includes 3S+ 
+                  dealership facilities (sales, service, spare parts, EV Charging 
+                  Station) and other supporting facilities for customer convenience.
                 </p>
               </div>
             </div>
@@ -75,11 +74,10 @@ export default function About() {
                       (Chief Executive Officer)
                     </p>
                     <p className="text-sm lg:text-base text-muted-foreground leading-relaxed">
-                      Profesional lulusan Teknik Industri ITB, merintis karir 
-                      di bidang Marketing PT HM Sampoerna kemudian 
-                      melanjutkan ke Kalla Group sebagai Direktur Kalla 
-                      Toyota pada tahun 2007 sampai posisi board of 
-                      Director Kalla Group
+                      A professional graduate of Industrial Engineering from ITB, 
+                      started his career in Marketing at PT HM Sampoerna then 
+                      continued to Kalla Group as Director of Kalla Toyota in 
+                      2007 until the position of Board of Director of Kalla Group
                     </p>
                   </div>
                 </div>
@@ -108,10 +106,9 @@ export default function About() {
                       (Chief Finance Officer)
                     </p>
                     <p className="text-sm lg:text-base text-muted-foreground leading-relaxed">
-                      Profesional di bidang keuangan dengan pengalaman 
-                      kerja 15 tahun di Lembaga keuangan baik Dalam 
-                      Negeri maupun Luar Negeri serta 15 tahun di 
-                      Korporasi dalam pengelolaan keuangan
+                      A finance professional with 15 years of work experience 
+                      in financial institutions both domestically and internationally, 
+                      as well as 15 years in corporate financial management
                     </p>
                   </div>
                 </div>
@@ -159,23 +156,23 @@ export default function About() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto space-y-16">
             <div className="text-center mb-12">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4">VISI, MISI, & VALUES</h2>
+              <h2 className="text-4xl lg:text-5xl font-bold mb-4">VISION, MISSION, & VALUES</h2>
             </div>
 
             <div className="space-y-8">
               <div>
-                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">VISI</h3>
+                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">VISION</h3>
                 <p className="text-lg leading-relaxed">
-                  Menjadi kelompok bisnis otomotif terdepan di Indonesia melalui keunggulan product dan layanan serta inovasi yang berkelanjutan.
+                  To become the leading automotive business group in Indonesia through product and service excellence and sustainable innovation.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">MISI</h3>
+                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">MISSION</h3>
                 <ol className="list-decimal list-inside space-y-3 text-lg">
-                  <li>Mewujudkan sumber daya manusia yang unggul, proses bisnis dan pengelolan keuangan yang profesional, efektif dan efisien.</li>
-                  <li>Memberikan pelayanan terbaik yang cepat dan tepat atas kebutuhan pelanggan.</li>
-                  <li>Berperan aktif dalam menjaga dan melestarikan lingkungan.</li>
+                  <li>To develop excellent human resources, professional, effective, and efficient business processes and financial management.</li>
+                  <li>To provide the best, fast, and accurate service for customer needs.</li>
+                  <li>To actively participate in protecting and preserving the environment.</li>
                 </ol>
               </div>
 
