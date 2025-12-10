@@ -6,10 +6,10 @@ export function WelcomeBanner() {
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex-1 text-white">
           <h1 className="text-3xl md:text-4xl font-bold mb-3 drop-shadow-lg">
-            Welcome to BYD Haka Talent Hunt
+            Welcome to Haka Auto Talent Hunt
           </h1>
           <p className="text-base md:text-lg text-white/90 max-w-2xl leading-relaxed">
-            Discover exciting career opportunities at BYD Haka Auto across Indonesia. 
+            Discover exciting career opportunities at Haka Auto across Indonesia. 
             Join our team of professionals driving the future of electric mobility and 
             sustainable automotive innovation.
           </p>
