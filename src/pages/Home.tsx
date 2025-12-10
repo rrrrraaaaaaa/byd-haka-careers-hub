@@ -15,7 +15,7 @@ export default function Home() {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground px-4">
-              Welcome to BYD Haka Talent Hunt
+              Welcome to Haka Auto Talent Hunt
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
               Join Indonesia's leading automotive dealership network. Build your career with us and drive innovation in the electric vehicle revolution.
@@ -69,7 +69,7 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-12 sm:py-16 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Why Join BYD Haka?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Why Join Haka Auto?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center space-y-4 p-6 rounded-lg border border-border hover:shadow-lg transition-shadow">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
