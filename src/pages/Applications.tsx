@@ -155,7 +155,7 @@ export default function Applications() {
               <h3 className="text-xl font-semibold text-foreground mb-2">No Applications Yet</h3>
               <p className="text-muted-foreground text-center mb-6">
                 You haven't submitted any job applications yet.<br />
-                Browse our open positions and start your career journey with BYD Haka!
+                Browse our open positions and start your career journey with Haka Auto!
               </p>
               <button 
                 onClick={() => navigate("/job-board")}

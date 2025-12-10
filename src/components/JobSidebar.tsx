@@ -50,7 +50,7 @@ export function JobSidebar() {
         {/* Logo Section */}
         <div className="h-16 flex items-center justify-center border-b border-sidebar-border bg-gradient-to-r from-primary to-primary-glow">
           {!collapsed ? (
-            <h1 className="text-xl font-bold text-white">BYD Haka Auto</h1>
+            <h1 className="text-xl font-bold text-white">Haka Auto</h1>
           ) : (
             <span className="text-2xl font-bold text-white">B</span>
           )}

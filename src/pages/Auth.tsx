@@ -137,7 +137,7 @@ export default function Auth() {
               {isLogin ? "Login" : "Register"}
             </h1>
             <p className="text-muted-foreground">
-              {isLogin ? "Welcome back to BYD Haka Talent Hunt!" : "Start your career journey with us"}
+              {isLogin ? "Welcome back to Haka Auto Talent Hunt!" : "Start your career journey with us"}
             </p>
           </div>
 
