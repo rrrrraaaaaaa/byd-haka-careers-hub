@@ -38,7 +38,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
   const navItems = isPublic ? publicNavItems : authNavItems;
 
   return (
-    <nav className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/95">
+    <nav className="bg-primary border-b border-primary sticky top-0 z-50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -56,10 +56,10 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
+                className={`text-sm font-medium transition-colors hover:text-white/80 ${
                   location.pathname === item.to
-                    ? "text-primary"
-                    : "text-foreground"
+                    ? "text-white font-bold"
+                    : "text-white/90"
                 }`}
               >
                 {item.label}
@@ -69,13 +69,13 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
               <>
                 <Link
                   to="/auth?mode=register"
-                  className="text-sm font-medium transition-colors hover:text-primary text-foreground"
+                  className="text-sm font-medium transition-colors hover:text-white/80 text-white/90"
                 >
                   Register
                 </Link>
                 <Link
                   to="/auth"
-                  className="text-sm font-medium transition-colors hover:text-primary text-foreground"
+                  className="text-sm font-medium transition-colors hover:text-white/80 text-white/90"
                 >
                   Login
                 </Link>
@@ -85,7 +85,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
                 variant="ghost"
                 size="icon"
                 onClick={handleLogout}
-                className="text-destructive hover:bg-destructive/10"
+                className="text-white hover:bg-white/10"
                 title="Logout"
               >
                 <LogOut className="h-5 w-5" />
@@ -99,6 +99,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
               variant="ghost"
               size="icon"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-white hover:bg-white/10"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -116,8 +117,8 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     location.pathname === item.to
-                      ? "bg-primary text-primary-foreground"
-                      : "text-foreground hover:bg-muted"
+                      ? "bg-white/20 text-white"
+                      : "text-white/90 hover:bg-white/10"
                   }`}
                 >
                   {item.label}
@@ -128,14 +129,14 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
                   <Link
                     to="/auth?mode=register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                    className="block px-4 py-2 rounded-md text-sm font-medium text-white/90 hover:bg-white/10 transition-colors"
                   >
                     Register
                   </Link>
                   <Link
                     to="/auth"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                    className="block px-4 py-2 rounded-md text-sm font-medium text-white/90 hover:bg-white/10 transition-colors"
                   >
                     Login
                   </Link>
@@ -146,7 +147,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
                     handleLogout();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full text-left px-4 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 rounded-md text-sm font-medium text-white/80 hover:bg-white/10 transition-colors flex items-center gap-2"
                 >
                   <LogOut className="h-4 w-4" />
                   Logout
