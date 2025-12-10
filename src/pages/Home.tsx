@@ -2,6 +2,7 @@ import TopNav from "@/components/TopNav";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Briefcase, Users, Award, TrendingUp } from "lucide-react";
+import { HeroCarousel } from "@/components/HeroCarousel";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -10,7 +11,10 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <TopNav isPublic={true} />
       
-      {/* Hero Section */}
+      {/* Hero Carousel */}
+      <HeroCarousel />
+      
+      {/* Welcome Section */}
       <section className="relative py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-br from-primary/10 to-primary/5">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-4 sm:space-y-6">

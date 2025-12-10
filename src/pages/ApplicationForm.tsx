@@ -14,6 +14,7 @@ import { z } from "zod";
 
 // Validation schema
 const applicationSchema = z.object({
+  fullName: z.string().min(2, "Please enter your full name").max(100, "Name is too long"),
   infoSource: z.string().min(1, "Please select how you found this job"),
   residentialAddress: z.string().min(3, "Please enter your residential address").max(200, "Address is too long"),
   age: z.number().int().min(17, "Minimum age is 17").max(65, "Maximum age is 65"),
@@ -37,6 +38,7 @@ export default function ApplicationForm() {
   const province = searchParams.get("province") || "";
 
   // Form state
+  const [fullName, setFullName] = useState("");
   const [infoSource, setInfoSource] = useState("");
   const [residentialAddress, setResidentialAddress] = useState("");
   const [age, setAge] = useState("");
@@ -142,6 +144,7 @@ export default function ApplicationForm() {
 
     // Validate form data
     const validationResult = applicationSchema.safeParse({
+      fullName,
       infoSource,
       residentialAddress,
       age: parseInt(age, 10),
@@ -247,29 +250,21 @@ export default function ApplicationForm() {
 
           <CardContent className="p-6 lg:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Job Information Source */}
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="jobSource">How did you find out about this job? *</Label>
-                  <Select value={infoSource} onValueChange={setInfoSource} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select information source" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="linkedin">LinkedIn</SelectItem>
-                      <SelectItem value="instagram">Instagram</SelectItem>
-                      <SelectItem value="tiktok">TikTok</SelectItem>
-                      <SelectItem value="website">Career Website</SelectItem>
-                      <SelectItem value="referral">Referral</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Personal Information */}
+              {/* Full Name */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name *</Label>
+                  <Input 
+                    id="fullName" 
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Enter your full name" 
+                    required 
+                    maxLength={100}
+                  />
+                </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="domicile">Residential Address *</Label>
@@ -327,6 +322,28 @@ export default function ApplicationForm() {
                   </p>
                 </div>
               </div>
+
+              {/* Job Information Source */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Job Information</h3>
+                <div className="space-y-2">
+                  <Label htmlFor="jobSource">How did you find out about this job? *</Label>
+                  <Select value={infoSource} onValueChange={setInfoSource} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select information source" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      <SelectItem value="instagram">Instagram</SelectItem>
+                      <SelectItem value="tiktok">TikTok</SelectItem>
+                      <SelectItem value="website">Career Website</SelectItem>
+                      <SelectItem value="referral">Referral</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
 
               {/* Work Experience */}
               <div className="space-y-4">

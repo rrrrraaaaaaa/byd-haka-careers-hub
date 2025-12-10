@@ -1,4 +1,4 @@
-import heroBanner from "@/assets/hero-banner.jpg";
+import carBanner from "@/assets/car-banner.jpg";
 
 export function WelcomeBanner() {
   return (
@@ -31,8 +31,8 @@ export function WelcomeBanner() {
 
         <div className="flex-shrink-0 w-full md:w-auto">
           <img
-            src={heroBanner}
-            alt="BYD Career Illustration"
+            src={carBanner}
+            alt="Haka Auto Vehicles"
             className="w-full md:w-96 h-auto rounded-xl shadow-2xl object-cover animate-scale-in"
           />
         </div>
