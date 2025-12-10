@@ -143,7 +143,7 @@ export function ApplicationProgress({ currentStatus, className }: ApplicationPro
               </p>
               <p className="text-sm text-muted-foreground mt-0.5">
                 {isAccepted 
-                  ? "Welcome to BYD Haka! We'll contact you soon." 
+                  ? "Welcome to Haka Auto! We'll contact you soon." 
                   : "Thank you for your interest. Keep trying!"}
               </p>
             </div>

@@ -4,6 +4,7 @@ import { LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import hakaLogo from "@/assets/haka-logo.png";
 
 interface TopNavProps {
   isPublic?: boolean;
@@ -41,11 +42,12 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">HA</span>
-            </div>
-            <div className="text-2xl font-bold text-primary">HAKA AUTO</div>
+          <Link to="/" className="flex items-center">
+            <img 
+              src={hakaLogo} 
+              alt="Haka Auto" 
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}

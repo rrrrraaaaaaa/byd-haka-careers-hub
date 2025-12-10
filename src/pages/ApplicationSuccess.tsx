@@ -23,7 +23,7 @@ const ApplicationSuccess = () => {
             </h1>
             
             <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
-              Thank you for applying for a position at BYD Haka. Your application has been received and will be processed shortly.
+              Thank you for applying for a position at Haka Auto. Your application has been received and will be processed shortly.
             </p>
             
             <div className="bg-muted/50 rounded-lg p-6 mb-8 max-w-md mx-auto">

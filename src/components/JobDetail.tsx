@@ -36,7 +36,7 @@ export function JobDetail({ position, branch, location, onBack, onApply }: JobDe
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
               <img 
                 src="/placeholder.svg" 
-                alt="BYD Haka Logo" 
+                alt="Haka Auto Logo" 
                 className="h-12 w-auto"
               />
               <p className="text-xs text-center mt-2 text-primary font-medium">Company Profile</p>
