@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import ApplicationForm from "./pages/ApplicationForm";
 import ApplicationSuccess from "./pages/ApplicationSuccess";
 import Applications from "./pages/Applications";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/application-form" element={<ApplicationForm />} />
           <Route path="/application-success" element={<ApplicationSuccess />} />
           <Route path="/applications" element={<Applications />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/tentang-kami" element={<About />} />
           <Route path="/kontak-kami" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
