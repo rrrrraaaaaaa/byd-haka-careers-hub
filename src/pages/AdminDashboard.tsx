@@ -246,8 +246,8 @@ export default function AdminDashboard() {
     });
   };
 
-  const uniquePositions = [...new Set(applications.map(app => app.position))];
-  const uniqueBranches = [...new Set(applications.map(app => app.branch))];
+  const uniquePositions = [...new Set(applications.map(app => app.position).filter(Boolean))];
+  const uniqueBranches = [...new Set(applications.map(app => app.branch).filter(Boolean))];
   const filteredApplications = getFilteredApplications();
 
   // Stats
