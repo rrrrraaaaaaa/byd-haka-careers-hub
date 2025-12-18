@@ -46,7 +46,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
             <img 
               src={hakaLogo} 
               alt="Haka Auto" 
-              className="h-10 w-auto"
+              className="h-14 w-auto"
             />
           </Link>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
 import TopNav from "@/components/TopNav";
+import { PDFPreviewModal } from "@/components/PDFPreviewModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,9 @@ import {
   MapPin,
   Building2,
   Briefcase,
-  FileText
+  FileText,
+  XCircle,
+  Phone
 } from "lucide-react";
 import { format } from "date-fns";
 import { enUS } from "date-fns/locale";
@@ -117,6 +120,9 @@ export default function AdminDashboard() {
   const [editingStatus, setEditingStatus] = useState<ApplicationStatus | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [cvPreviewOpen, setCvPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
 
   useEffect(() => {
     if (isAdmin) {
@@ -182,6 +188,12 @@ export default function AdminDashboard() {
     }
     
     setIsUpdating(false);
+  };
+
+  const openCvPreview = (url: string, title: string) => {
+    setPreviewUrl(url);
+    setPreviewTitle(title);
+    setCvPreviewOpen(true);
   };
 
   const exportToExcel = () => {
@@ -257,6 +269,7 @@ export default function AdminDashboard() {
     !['submitted', 'on_review', 'accepted', 'rejected'].includes(app.status)
   ).length;
   const accepted = applications.filter(app => app.status === 'accepted').length;
+  const rejected = applications.filter(app => app.status === 'rejected').length;
 
   if (authLoading) {
     return (
@@ -287,7 +300,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -296,7 +309,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{totalApplications}</p>
-                  <p className="text-sm text-muted-foreground">Total Applications</p>
+                  <p className="text-sm text-muted-foreground">Total</p>
                 </div>
               </div>
             </CardContent>
@@ -309,7 +322,7 @@ export default function AdminDashboard() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{pendingReview}</p>
-                  <p className="text-sm text-muted-foreground">Pending Review</p>
+                  <p className="text-sm text-muted-foreground">Pending</p>
                 </div>
               </div>
             </CardContent>
@@ -336,6 +349,19 @@ export default function AdminDashboard() {
                 <div>
                   <p className="text-2xl font-bold">{accepted}</p>
                   <p className="text-sm text-muted-foreground">Accepted</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-destructive/10 rounded-lg">
+                  <XCircle className="w-5 h-5 text-destructive" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{rejected}</p>
+                  <p className="text-sm text-muted-foreground">Rejected</p>
                 </div>
               </div>
             </CardContent>
@@ -545,22 +571,42 @@ export default function AdminDashboard() {
                                     {/* Documents */}
                                     <div className="border-t pt-4">
                                       <h4 className="font-semibold mb-3">Documents</h4>
-                                      <div className="flex gap-4">
+                                      <div className="flex flex-wrap gap-2">
                                         {selectedApp.cv_url && (
-                                          <Button variant="outline" size="sm" asChild>
-                                            <a href={selectedApp.cv_url} target="_blank" rel="noopener noreferrer">
-                                              <Download className="w-4 h-4 mr-2" />
-                                              Download CV
-                                            </a>
-                                          </Button>
+                                          <>
+                                            <Button 
+                                              variant="default" 
+                                              size="sm"
+                                              onClick={() => openCvPreview(selectedApp.cv_url, `CV - ${selectedApp.profiles?.full_name || 'Applicant'}`)}
+                                            >
+                                              <Eye className="w-4 h-4 mr-2" />
+                                              View CV
+                                            </Button>
+                                            <Button variant="outline" size="sm" asChild>
+                                              <a href={selectedApp.cv_url} target="_blank" rel="noopener noreferrer">
+                                                <Download className="w-4 h-4 mr-2" />
+                                                Download CV
+                                              </a>
+                                            </Button>
+                                          </>
                                         )}
                                         {selectedApp.certificate_url && (
-                                          <Button variant="outline" size="sm" asChild>
-                                            <a href={selectedApp.certificate_url} target="_blank" rel="noopener noreferrer">
-                                              <Download className="w-4 h-4 mr-2" />
-                                              Download Certificate
-                                            </a>
-                                          </Button>
+                                          <>
+                                            <Button 
+                                              variant="secondary" 
+                                              size="sm"
+                                              onClick={() => openCvPreview(selectedApp.certificate_url, `Certificate - ${selectedApp.profiles?.full_name || 'Applicant'}`)}
+                                            >
+                                              <Eye className="w-4 h-4 mr-2" />
+                                              View Certificate
+                                            </Button>
+                                            <Button variant="outline" size="sm" asChild>
+                                              <a href={selectedApp.certificate_url} target="_blank" rel="noopener noreferrer">
+                                                <Download className="w-4 h-4 mr-2" />
+                                                Download Certificate
+                                              </a>
+                                            </Button>
+                                          </>
                                         )}
                                       </div>
                                     </div>
@@ -623,6 +669,14 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </main>
+      
+      {/* PDF Preview Modal */}
+      <PDFPreviewModal
+        isOpen={cvPreviewOpen}
+        onClose={() => setCvPreviewOpen(false)}
+        fileUrl={previewUrl}
+        title={previewTitle}
+      />
     </div>
   );
 }

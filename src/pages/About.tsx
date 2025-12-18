@@ -161,18 +161,18 @@ export default function About() {
 
             <div className="space-y-8">
               <div>
-                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">VISION</h3>
+                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">VISI</h3>
                 <p className="text-lg leading-relaxed">
-                  To become the leading automotive business group in Indonesia through product and service excellence and sustainable innovation.
+                  Menjadi grup bisnis otomotif terkemuka di Indonesia melalui keunggulan produk, layanan, dan inovasi berkelanjutan.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">MISSION</h3>
+                <h3 className="text-3xl font-bold mb-4 text-teal-600 dark:text-teal-400">MISI</h3>
                 <ol className="list-decimal list-inside space-y-3 text-lg">
-                  <li>To develop excellent human resources, professional, effective, and efficient business processes and financial management.</li>
-                  <li>To provide the best, fast, and accurate service for customer needs.</li>
-                  <li>To actively participate in protecting and preserving the environment.</li>
+                  <li>Mengembangkan sumber daya manusia yang unggul, proses bisnis yang profesional, efektif, dan efisien serta pengelolaan keuangan yang baik.</li>
+                  <li>Memberikan layanan terbaik, cepat, dan akurat untuk kebutuhan pelanggan.</li>
+                  <li>Berpartisipasi aktif dalam melindungi dan melestarikan lingkungan.</li>
                 </ol>
               </div>
 
