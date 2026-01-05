@@ -15,6 +15,8 @@ import Applications from "./pages/Applications";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
+import ProfilePage from "./pages/ProfilePage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -28,6 +30,7 @@ const App = () => (
           <Route path="/lowongan" element={<Landing />} />
           <Route path="/job-board" element={<Index />} />
           <Route path="/dashboard" element={<Index />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/application-form" element={<ApplicationForm />} />
           <Route path="/application-success" element={<ApplicationSuccess />} />
           <Route path="/applications" element={<Applications />} />

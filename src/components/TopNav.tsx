@@ -33,6 +33,7 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
   const authNavItems = [
     { to: "/job-board", label: "Job Board" },
     { to: "/applications", label: "Applications" },
+    { to: "/profile", label: "Profile" },
   ];
 
   const navItems = isPublic ? publicNavItems : authNavItems;
@@ -43,9 +44,9 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img 
-              src={hakaLogo} 
-              alt="Haka Auto" 
+            <img
+              src={hakaLogo}
+              alt="Haka Auto"
               className="h-14 w-auto"
             />
           </Link>
@@ -56,11 +57,10 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`text-sm font-medium transition-colors hover:text-white/80 ${
-                  location.pathname === item.to
+                className={`text-sm font-medium transition-colors hover:text-white/80 ${location.pathname === item.to
                     ? "text-white font-bold"
                     : "text-white/90"
-                }`}
+                  }`}
               >
                 {item.label}
               </Link>
@@ -115,11 +115,10 @@ export default function TopNav({ isPublic = false }: TopNavProps) {
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    location.pathname === item.to
+                  className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === item.to
                       ? "bg-white/20 text-white"
                       : "text-white/90 hover:bg-white/10"
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </Link>
