@@ -14,18 +14,18 @@ import { z } from "zod";
 
 // Validation schema
 const applicationSchema = z.object({
-  fullName: z.string().min(2, "Nama lengkap harus diisi").max(100, "Nama terlalu panjang"),
-  nik: z.string().length(16, "NIK harus 16 digit").regex(/^\d+$/, "NIK harus berupa angka"),
-  residentialAddress: z.string().min(3, "Alamat domisili harus diisi").max(200, "Alamat terlalu panjang"),
-  cityProvince: z.string().min(3, "Kota dan Provinsi harus diisi"),
-  dateOfBirth: z.string().min(1, "Tanggal lahir harus diisi"),
-  gender: z.enum(["male", "female"], { required_error: "Pilih jenis kelamin" }),
-  whatsappNumber: z.string().min(10, "Nomor WhatsApp tidak valid").regex(/^[0-9+]+$/, "Nomor WhatsApp harus berupa angka"),
-  expectedSalary: z.number().positive("Masukkan gaji yang valid"),
+  fullName: z.string().min(2, "Full name is required").max(100, "Name too long"),
+  nik: z.string().length(16, "NIK must be 16 digits").regex(/^\d+$/, "NIK must be numbers"),
+  residentialAddress: z.string().min(3, "Domicile address is required").max(200, "Address too long"),
+  cityProvince: z.string().min(3, "City and Province is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  gender: z.enum(["male", "female"], { required_error: "Select gender" }),
+  whatsappNumber: z.string().min(10, "Invalid WhatsApp number").regex(/^[0-9+]+$/, "WhatsApp number must be digits"),
+  expectedSalary: z.number().positive("Enter valid salary"),
   hasAutomotiveExperience: z.boolean(),
-  workExperienceDuration: z.string().min(1, "Pilih lama pengalaman kerja"),
-  educationLevel: z.string().min(1, "Pilih pendidikan terakhir"),
-  infoSource: z.string().min(1, "Pilih sumber informasi"),
+  workExperienceDuration: z.string().min(1, "Select work experience duration"),
+  educationLevel: z.string().min(1, "Select last education"),
+  infoSource: z.string().min(1, "Select information source"),
 });
 
 export default function ApplicationForm() {
@@ -69,7 +69,7 @@ export default function ApplicationForm() {
       if (!session) {
         toast({
           title: "Authentication Required",
-          description: "Silahkan login untuk melamar pekerjaan",
+          description: "Please login to apply for a job",
           variant: "destructive",
         });
         navigate('/auth');
@@ -120,7 +120,7 @@ export default function ApplicationForm() {
       });
 
     if (uploadError) {
-      throw new Error(`Gagal mengupload ${folder}: ${uploadError.message}`);
+      throw new Error(`Failed to upload ${folder}: ${uploadError.message}`);
     }
 
     return fileName;
@@ -137,8 +137,8 @@ export default function ApplicationForm() {
     // Validate required files (If URL exists, file input is optional)
     if (!cvFile && !cvUrl) {
       toast({
-        title: "CV Diperlukan",
-        description: "Silahkan upload CV terbaru Anda",
+        title: "CV Required",
+        description: "Please upload your latest CV",
         variant: "destructive",
       });
       return;
@@ -146,8 +146,8 @@ export default function ApplicationForm() {
 
     if (!paklaringFile && !paklaringUrl) {
       toast({
-        title: "Paklaring Diperlukan",
-        description: "Silahkan upload Paklaring / Ijazah Anda",
+        title: "Certificate Required",
+        description: "Please upload your Experience Certificate / Diploma",
         variant: "destructive",
       });
       return;
@@ -157,16 +157,16 @@ export default function ApplicationForm() {
     const maxSize = 5 * 1024 * 1024;
     if (cvFile && cvFile.size > maxSize) {
       toast({
-        title: "File Terlalu Besar",
-        description: "Ukuran CV maksimal 5MB",
+        title: "File Too Large",
+        description: "CV size max 5MB",
         variant: "destructive",
       });
       return;
     }
     if (paklaringFile && paklaringFile.size > maxSize) {
       toast({
-        title: "File Terlalu Besar",
-        description: "Ukuran Paklaring maksimal 5MB",
+        title: "File Too Large",
+        description: "Certificate size max 5MB",
         variant: "destructive",
       });
       return;
@@ -194,8 +194,37 @@ export default function ApplicationForm() {
     if (!validationResult.success) {
       const firstError = validationResult.error.errors[0];
       toast({
-        title: "Validasi Gagal",
+        title: "Validation Failed",
         description: firstError.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check application limit (max 2 in last 3 months)
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+    const { count: applicationCount, error: countError } = await supabase
+      .from('applications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', threeMonthsAgo.toISOString());
+
+    if (countError) {
+      console.error("Error checking application limit:", countError);
+      toast({
+        title: "An Error Occurred",
+        description: "Failed to verify application limit. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (applicationCount !== null && applicationCount >= 2) {
+      toast({
+        title: "Application Limit Reached",
+        description: `Sorry, you have reached the limit of 2 applications in the last 3 months.`,
         variant: "destructive",
       });
       return;
@@ -216,7 +245,7 @@ export default function ApplicationForm() {
       }
 
       if (!finalCvUrl || !finalPaklaringUrl) {
-        throw new Error("Gagal memproses dokumen");
+        throw new Error("Failed to process documents");
       }
 
       // Insert application record
@@ -252,16 +281,16 @@ export default function ApplicationForm() {
       }
 
       toast({
-        title: "Lamaran Terkirim",
-        description: "Lamaran Anda berhasil dikirim!",
+        title: "Application Submitted",
+        description: "Your application has been successfully submitted!",
       });
 
       navigate("/application-success");
     } catch (error) {
       console.error("Application submission error:", error);
       toast({
-        title: "Pengiriman Gagal",
-        description: error instanceof Error ? error.message : "Gagal mengirim lamaran. Silahkan coba lagi.",
+        title: "Submission Failed",
+        description: error instanceof Error ? error.message : "Failed to submit application. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -280,21 +309,21 @@ export default function ApplicationForm() {
           className="mb-6 text-primary hover:text-primary-glow"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Kembali
+          Back
         </Button>
 
         <Card className="shadow-strong">
           <CardHeader className="bg-gradient-to-r from-primary/5 to-transparent border-b">
             <CardTitle className="text-2xl lg:text-3xl text-primary">
-              Formulir Lamaran Kerja
+              Job Application Form
             </CardTitle>
             <p className="text-muted-foreground mt-2">
-              Silahkan isi data diri Anda dengan lengkap dan benar
+              Please fill in your personal data completely and correctly
             </p>
             {position && (
               <div className="mt-4 p-3 bg-primary/10 rounded-lg">
                 <p className="text-sm font-medium">
-                  Posisi yang dilamar: <span className="text-primary">{position}</span>
+                  Position applied for: <span className="text-primary">{position}</span>
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {branch}, {province}
@@ -307,27 +336,27 @@ export default function ApplicationForm() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Data Pribadi</h3>
+                <h3 className="text-lg font-semibold text-foreground">Personal Data</h3>
 
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Nama Lengkap *</Label>
+                  <Label htmlFor="fullName">Full Name *</Label>
                   <Input
                     id="fullName"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Masukkan nama lengkap"
+                    placeholder="Enter full name"
                     required
                     maxLength={100}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="nik">NIK KTP *</Label>
+                  <Label htmlFor="nik">KTP NIK *</Label>
                   <Input
                     id="nik"
                     value={nik}
                     onChange={(e) => setNik(e.target.value)}
-                    placeholder="16 digit NIK"
+                    placeholder="16 digits NIK"
                     required
                     maxLength={16}
                     pattern="\d{16}"
@@ -335,31 +364,31 @@ export default function ApplicationForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="domicile">Alamat Domisili *</Label>
+                  <Label htmlFor="domicile">Domicile Address *</Label>
                   <Input
                     id="domicile"
                     value={residentialAddress}
                     onChange={(e) => setResidentialAddress(e.target.value)}
-                    placeholder="Alamat lengkap tempat tinggal saat ini"
+                    placeholder="Current complete residential address"
                     required
                     maxLength={200}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cityProvince">Kota dan Provinsi *</Label>
+                  <Label htmlFor="cityProvince">City and Province *</Label>
                   <Input
                     id="cityProvince"
                     value={cityProvince}
                     onChange={(e) => setCityProvince(e.target.value)}
-                    placeholder="Cth. Magelang-Jawa Tengah, Banjarmasin-Kalimantan Selatan"
+                    placeholder="e.g. Magelang-Central Java, Banjarmasin-South Kalimantan"
                     required
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="dob">Tanggal Lahir *</Label>
+                    <Label htmlFor="dob">Date of Birth *</Label>
                     <Input
                       id="dob"
                       type="date"
@@ -370,15 +399,15 @@ export default function ApplicationForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Jenis Kelamin *</Label>
+                    <Label>Gender *</Label>
                     <RadioGroup value={gender} onValueChange={setGender} required>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="male" id="male" />
-                        <Label htmlFor="male" className="font-normal cursor-pointer">Laki-laki</Label>
+                        <Label htmlFor="male" className="font-normal cursor-pointer">Male</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="female" id="female" />
-                        <Label htmlFor="female" className="font-normal cursor-pointer">Perempuan</Label>
+                        <Label htmlFor="female" className="font-normal cursor-pointer">Female</Label>
                       </div>
                     </RadioGroup>
                   </div>
@@ -395,61 +424,61 @@ export default function ApplicationForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="whatsapp">Nomor WhatsApp *</Label>
+                  <Label htmlFor="whatsapp">WhatsApp Number *</Label>
                   <Input
                     id="whatsapp"
                     value={whatsappNumber}
                     onChange={(e) => setWhatsappNumber(e.target.value)}
-                    placeholder="Cth. 081234567890"
+                    placeholder="e.g. 081234567890"
                     required
                     type="tel"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="expectedSalary">Gaji yang diharapkan *</Label>
+                  <Label htmlFor="expectedSalary">Expected Salary *</Label>
                   <Input
                     id="expectedSalary"
                     value={expectedSalary}
                     onChange={(e) => setExpectedSalary(e.target.value)}
-                    placeholder="Cth. 5.500.000, 6.200.000"
+                    placeholder="e.g. 5.500.000, 6.200.000"
                     required
                   />
                   <p className="text-xs text-muted-foreground">
-                    Masukkan angka nominal
+                    Enter nominal number
                   </p>
                 </div>
               </div>
 
               {/* Experience */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Pengalaman Kerja</h3>
+                <h3 className="text-lg font-semibold text-foreground">Work Experience</h3>
 
                 <div className="space-y-2">
-                  <Label>Memiliki pengalaman di bidang otomotif *</Label>
+                  <Label>Have automotive experience? *</Label>
                   <RadioGroup value={hasAutomotiveExperience} onValueChange={setHasAutomotiveExperience} required>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="yes" id="expYes" />
-                      <Label htmlFor="expYes" className="font-normal cursor-pointer">YA</Label>
+                      <Label htmlFor="expYes" className="font-normal cursor-pointer">YES</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="no" id="expNo" />
-                      <Label htmlFor="expNo" className="font-normal cursor-pointer">TIDAK</Label>
+                      <Label htmlFor="expNo" className="font-normal cursor-pointer">NO</Label>
                     </div>
                   </RadioGroup>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="yearsExp">Berapa lama pengalaman kerja yang sesuai dengan posisi yang Anda lamar *</Label>
+                  <Label htmlFor="yearsExp">How long is your work experience related to this position? *</Label>
                   <Select value={workExperienceDuration} onValueChange={setWorkExperienceDuration} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih lama pengalaman" />
+                      <SelectValue placeholder="Select experience duration" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="<1">&lt;1 Tahun</SelectItem>
-                      <SelectItem value="1-3">1-3 Tahun</SelectItem>
-                      <SelectItem value="3-5">3-5 Tahun</SelectItem>
-                      <SelectItem value=">5">&gt;5 Tahun</SelectItem>
+                      <SelectItem value="<1 year/fresh graduate">&lt;1 Year / Fresh Graduate</SelectItem>
+                      <SelectItem value="1-3 years">1-3 Years</SelectItem>
+                      <SelectItem value="3-5 years">3-5 Years</SelectItem>
+                      <SelectItem value=">5 years">&gt;5 Years</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -457,13 +486,13 @@ export default function ApplicationForm() {
 
               {/* Education */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Pendidikan</h3>
+                <h3 className="text-lg font-semibold text-foreground">Education</h3>
 
                 <div className="space-y-2">
-                  <Label htmlFor="education">Pendidikan Terakhir *</Label>
+                  <Label htmlFor="education">Last Education *</Label>
                   <Select value={educationLevel} onValueChange={setEducationLevel} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih pendidikan terakhir" />
+                      <SelectValue placeholder="Select last education" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="sma">SMA / SMK</SelectItem>
@@ -478,20 +507,20 @@ export default function ApplicationForm() {
 
               {/* Job Info Source */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Informasi Lowongan</h3>
+                <h3 className="text-lg font-semibold text-foreground">Vacancy Information</h3>
                 <div className="space-y-2">
-                  <Label htmlFor="jobSource">Darimana Anda mengetahui lowongan ini? *</Label>
+                  <Label htmlFor="jobSource">Where did you find this vacancy? *</Label>
                   <Select value={infoSource} onValueChange={setInfoSource} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Pilih sumber informasi" />
+                      <SelectValue placeholder="Select information source" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="linkedin">LinkedIn</SelectItem>
                       <SelectItem value="instagram">Instagram</SelectItem>
                       <SelectItem value="tiktok">TikTok</SelectItem>
-                      <SelectItem value="website">Website Karir</SelectItem>
-                      <SelectItem value="referral">Referensi Teman/Karyawan</SelectItem>
-                      <SelectItem value="other">Lainnya</SelectItem>
+                      <SelectItem value="website">Career Website</SelectItem>
+                      <SelectItem value="referral">Friend/Employee Referral</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -499,13 +528,13 @@ export default function ApplicationForm() {
 
               {/* Documents */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">Dokumen</h3>
+                <h3 className="text-lg font-semibold text-foreground">Documents</h3>
 
                 <div className="space-y-2">
-                  <Label htmlFor="cv">Silahkan Upload CV terbaru Anda *</Label>
+                  <Label htmlFor="cv">Please Upload your latest CV *</Label>
                   {cvUrl && (
                     <div className="text-sm text-green-600 mb-1 flex items-center">
-                      ✓ CV sudah tersedia dari profil
+                      ✓ CV available from profile
                     </div>
                   )}
                   <Input
@@ -521,10 +550,10 @@ export default function ApplicationForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="paklaring">Silahkan Upload Paklaring (Surat keterangan pernah bekerja) terbaru Anda *</Label>
+                  <Label htmlFor="paklaring">Please Upload your latest Experience Certificate (Paklaring) *</Label>
                   {paklaringUrl && (
                     <div className="text-sm text-green-600 mb-1 flex items-center">
-                      ✓ Paklaring sudah tersedia dari profil
+                      ✓ Certificate available from profile
                     </div>
                   )}
                   <Input
@@ -535,7 +564,7 @@ export default function ApplicationForm() {
                     required={!paklaringUrl}
                   />
                   <p className="text-xs text-muted-foreground">
-                    *Bagi fresh graduate dan yang pertama kali bekerja bisa dilampirkan Ijazah / SKL
+                    *For fresh graduates and first-time job seekers, please attach Diploma / SKL
                   </p>
                   <p className="text-xs text-muted-foreground">
                     Upload 1 supported file: PDF. Max 5 MB.
@@ -551,14 +580,14 @@ export default function ApplicationForm() {
                   onClick={() => navigate(-1)}
                   disabled={isSubmitting}
                 >
-                  Batal
+                  Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={isSubmitting}
                   className="bg-primary hover:bg-primary-glow px-8"
                 >
-                  {isSubmitting ? "Mengirim..." : "Kirim Lamaran"}
+                  {isSubmitting ? "Sending..." : "Submit Application"}
                 </Button>
               </div>
             </form>

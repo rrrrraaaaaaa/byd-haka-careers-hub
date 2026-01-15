@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink, X, FileText, Loader2 } from "lucide-react";
@@ -14,37 +14,17 @@ interface PDFPreviewModalProps {
 export function PDFPreviewModal({ isOpen, onClose, fileUrl, title }: PDFPreviewModalProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [signedUrl, setSignedUrl] = useState<string | null>(null);
-
-  const getSignedUrl = async () => {
-    setLoading(true);
-    setError(false);
-    
-    try {
-      const { data, error } = await supabase.storage
-        .from("application-documents")
-        .createSignedUrl(fileUrl, 3600); // 1 hour expiry
-      
-      if (error) throw error;
-      setSignedUrl(data.signedUrl);
-    } catch (err) {
-      console.error("Error getting signed URL:", err);
-      setError(true);
-    } finally {
+  // No need for signed URL logic since buckets are public
+  // We will pass the full public URL from the parent component
+  useEffect(() => {
+    if (isOpen && fileUrl) {
       setLoading(false);
     }
-  };
-
-  // Get signed URL when modal opens
-  useState(() => {
-    if (isOpen && fileUrl) {
-      getSignedUrl();
-    }
-  });
+  }, [isOpen, fileUrl]);
 
   const handleDownload = () => {
-    if (signedUrl) {
-      window.open(signedUrl, "_blank");
+    if (fileUrl) {
+      window.open(fileUrl, "_blank");
     }
   };
 
@@ -57,13 +37,13 @@ export function PDFPreviewModal({ isOpen, onClose, fileUrl, title }: PDFPreviewM
             {title}
           </DialogTitle>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleDownload} disabled={!signedUrl}>
+            <Button variant="outline" size="sm" onClick={handleDownload} disabled={!fileUrl}>
               <Download className="w-4 h-4 mr-2" />
               Download
             </Button>
-            {signedUrl && (
+            {fileUrl && (
               <Button variant="outline" size="sm" asChild>
-                <a href={signedUrl} target="_blank" rel="noopener noreferrer">
+                <a href={fileUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Open in New Tab
                 </a>
@@ -71,7 +51,7 @@ export function PDFPreviewModal({ isOpen, onClose, fileUrl, title }: PDFPreviewM
             )}
           </div>
         </DialogHeader>
-        
+
         <div className="flex-1 bg-muted/30 overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center h-full">
@@ -88,9 +68,9 @@ export function PDFPreviewModal({ isOpen, onClose, fileUrl, title }: PDFPreviewM
                 Download File
               </Button>
             </div>
-          ) : signedUrl ? (
+          ) : fileUrl ? (
             <iframe
-              src={`${signedUrl}#toolbar=0`}
+              src={`${fileUrl}#toolbar=0`}
               className="w-full h-full border-0"
               title={title}
               onLoad={() => setLoading(false)}

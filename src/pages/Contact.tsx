@@ -1,93 +1,65 @@
+
 import TopNav from "@/components/TopNav";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Footer from "@/components/Footer";
+import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
+import contactIllustration from "@/assets/contact-illustration-flat.png";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Contact() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <TopNav isPublic={true} />
-      
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mail className="h-5 w-5 text-primary" />
-                  Email
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">recruitment@bydhaka.com</p>
-                <p className="text-muted-foreground">info@bydhaka.com</p>
-              </CardContent>
-            </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Phone className="h-5 w-5 text-primary" />
-                  Phone
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">+62 21 1234 5678</p>
-                <p className="text-muted-foreground">+62 811 2345 6789</p>
-              </CardContent>
-            </Card>
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
+        {/* Left Side - Illustration & Info */}
+        <div className="w-full bg-white flex items-center justify-center p-8 lg:p-12 relative overflow-hidden">
+          {/* Background Decorations */}
+          <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-3xl"></div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  Head Office
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Jl. Raya Utama No. 123<br />
-                  Jakarta Selatan, DKI Jakarta<br />
-                  12345, Indonesia
-                </p>
-              </CardContent>
-            </Card>
+          <div className="max-w-4xl w-full relative z-10 space-y-12 text-center">
+            <div className="space-y-4 flex flex-col items-center">
+              <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full tracking-wide uppercase">Support</span>
+              <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">Get in Touch</h1>
+              <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto">
+                Have questions about career opportunities at Haka Auto? We're here to help you navigate your journey.
+              </p>
+            </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" />
-                  Office Hours
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Monday - Friday: 9:00 AM - 5:00 PM</p>
-                <p className="text-muted-foreground">Saturday: 9:00 AM - 1:00 PM</p>
-                <p className="text-muted-foreground">Sunday: Closed</p>
-              </CardContent>
-            </Card>
+            <div className="relative max-w-md mx-auto">
+              <img
+                src={contactIllustration}
+                alt="Customer Support"
+                className="w-full h-auto drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              <div className="flex flex-col items-center gap-3 p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                <div className="p-3 bg-white rounded-xl shadow-sm text-primary">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">Email Us</h3>
+                  <p className="text-gray-500">recruitment@hakaauto.com</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center gap-3 p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                <div className="p-3 bg-white rounded-xl shadow-sm text-primary">
+                  <MapPin className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-lg">Visit Us</h3>
+                  <p className="text-gray-500 text-sm max-w-[250px] mx-auto">Cyber 2 Tower, Lantai 32, Jakarta Selatan</p>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Recruitment Inquiries</CardTitle>
-              <CardDescription>
-                For questions about job applications, interviews, or career opportunities
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground">
-                If you have questions about your application status or need assistance with the recruitment process, 
-                please email our HR team at recruitment@bydhaka.com. We typically respond within 1-2 business days.
-              </p>
-              <p className="text-muted-foreground">
-                Please include your full name and the position you applied for in your email subject line.
-              </p>
-            </CardContent>
-          </Card>
         </div>
-      </main>
+      </div>
+      <Footer />
     </div>
   );
 }

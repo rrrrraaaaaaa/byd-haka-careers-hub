@@ -9,6 +9,16 @@ import { z } from "zod";
 import TopNav from "@/components/TopNav";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import authIllustration from "@/assets/auth-illustration.png";
+import Footer from "@/components/Footer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
@@ -42,6 +52,10 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(mode !== "register");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    setIsLogin(mode !== "register");
+  }, [mode]);
+
   // Login form
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,21 +75,45 @@ export default function Auth() {
   const [expectedSalary, setExpectedSalary] = useState("");
   const [hasAutomotiveExperience, setHasAutomotiveExperience] = useState<string>("");
   const [workExperienceDuration, setWorkExperienceDuration] = useState("");
+
   const [educationLevel, setEducationLevel] = useState("");
+
+  // Forgot Password State
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+
+
 
   const [cvFile, setCvFile] = useState<File | null>(null);
   const [paklaringFile, setPaklaringFile] = useState<File | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+
+  const checkUserRole = async (userId: string) => {
+    const { data } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (data) {
+      navigate("/admin");
+    } else {
+      navigate("/profile");
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/job-board");
+        checkUserRole(session.user.id);
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        navigate("/job-board");
+        checkUserRole(session.user.id);
       }
     });
 
@@ -97,24 +135,34 @@ export default function Auth() {
       if (error) throw error;
 
       toast.success("Login successful!");
-      navigate("/job-board");
-    } catch (error) {
+      // Navigation handled by useEffect
+    } catch (error: any) {
+      console.error("Login Check Error:", error);
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else if (error instanceof Error) {
-        toast.error(error.message);
+        // Check for specific Supabase errors
+        if (error.message.includes("Email not confirmed")) {
+          toast.error("Please verify your email address before logging in.");
+        } else if (error.message.includes("Invalid login credentials")) {
+          toast.error("Invalid email or password.");
+        } else {
+          toast.error(error.message || "An error occurred during login");
+        }
+      } else {
+        toast.error("An unexpected error occurred");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const uploadFile = async (userId: string, file: File, folder: string): Promise<string> => {
+  const uploadFile = async (userId: string, file: File, folder: string, bucket: string = 'application-documents'): Promise<string> => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${userId}/${folder}/${Date.now()}.${fileExt}`;
 
     const { error: uploadError } = await supabase.storage
-      .from('application-documents')
+      .from(bucket)
       .upload(fileName, file, {
         cacheControl: '3600',
         upsert: false
@@ -138,6 +186,10 @@ export default function Auth() {
       }
       if (!paklaringFile) {
         toast.error("Please upload your Paklaring/Certificate");
+        return;
+      }
+      if (!photoFile) {
+        toast.error("Please upload your Pass Foto");
         return;
       }
     }
@@ -164,7 +216,6 @@ export default function Auth() {
 
       setLoading(true);
 
-      // 1. Sign Up
       const metadata = {
         nik: validated.nik,
         full_name: validated.fullName,
@@ -193,36 +244,47 @@ export default function Auth() {
         // 2. Upload Files (Only if session is active)
         if (authData.session) {
           try {
-            const cvUrl = await uploadFile(authData.user.id, cvFile!, 'cv');
-            const paklaringUrl = await uploadFile(authData.user.id, paklaringFile!, 'certificate');
+            const cvUrl = await uploadFile(authData.user.id, cvFile!, 'cv', 'application-documents');
+            const paklaringUrl = await uploadFile(authData.user.id, paklaringFile!, 'certificate', 'application-documents');
+            const photoUrl = await uploadFile(authData.user.id, photoFile!, 'photos', 'avatars');
 
             // 3. Update Profile with File URLs
-            const { error: updateError } = await supabase
+            // We also update user_metadata so handle_new_user trigger works or client-side fallback works
+            const { error: updateError } = await supabase.auth.updateUser({
+              data: {
+                cv_url: cvUrl,
+                certificate_url: paklaringUrl,
+                avatar_url: photoUrl
+              }
+            });
+
+            if (updateError) throw updateError;
+
+            // Also explicitly update profiles table just in case
+            await supabase
               .from('profiles')
               .update({
                 cv_url: cvUrl,
                 certificate_url: paklaringUrl,
-                // We update these again just in case, but they are already in metadata -> profile via trigger
+                avatar_url: photoUrl
               })
               .eq('user_id', authData.user.id);
 
-            if (updateError) throw updateError;
 
             toast.success("Registration successful! Complete.");
-            navigate("/job-board");
-          } catch (fileError) {
+            // Navigate handled by session listener
+          } catch (fileError: any) {
             console.error("File upload failed:", fileError);
-            toast.success("Account created, but file upload failed. Please login to upload documents.");
-            navigate("/job-board");
+            toast.success(`Account created, but file upload failed: ${fileError.message}`);
           }
         } else {
           // No session (email verification required)
+          // We cannot upload files yet. User must verify email first.
           toast.success("Registration successful! Please check your email to verify your account.");
-          // Profile data is saved via trigger. Files must be uploaded later.
         }
       }
 
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast.error(error.errors[0].message);
       } else if (error instanceof Error) {
@@ -234,193 +296,293 @@ export default function Auth() {
     }
   };
 
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success("Password reset link sent! Please check your email.");
+      setShowForgotPassword(false);
+      setResetEmail("");
+    } catch (error: any) {
+      console.error("Reset password error:", error);
+      toast.error(error.message || "Failed to send reset link");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <TopNav isPublic={true} />
 
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className={`w-full ${isLogin ? 'max-w-md' : 'max-w-4xl'} space-y-6 transition-all duration-300`}>
-          <div className="space-y-2 text-center">
-            <h1 className="text-3xl font-bold text-primary">
-              {isLogin ? "Login" : "Register"}
-            </h1>
-            <p className="text-muted-foreground">
-              {isLogin ? "Welcome back to Haka Auto Talent Hunt!" : "Start your career journey with us"}
-            </p>
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)]">
+        {/* Left Side - Illustration */}
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 bg-white sticky top-[64px] h-[calc(100vh-64px)]">
+          <div className="max-w-xl">
+            <img
+              src={authIllustration}
+              alt="Haka Auto Talent Hunt"
+              className="w-full h-auto object-contain animate-fade-in"
+            />
           </div>
+        </div>
 
-          <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4 bg-white p-6 rounded-lg shadow-sm border">
-            {isLogin ? (
-              /* LOGIN FORM */
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </>
-            ) : (
-              /* RICH REGISTER FORM */
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* LEFT COLUMN: Account & Personal */}
+        {/* Right Side - Form */}
+        <div className="w-full lg:w-1/2 bg-white p-6 lg:p-12">
+          <div className={`w-full ${isLogin ? 'max-w-md' : 'max-w-2xl'} space-y-8 animate-fade-in m-auto`}>
+
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold text-primary tracking-tight">
+                {isLogin ? "Login" : "Register"}
+              </h2>
+              {/* <p className="text-muted-foreground">
+                {isLogin ? "Welcome back!" : "Create your account"}
+              </p> */}
+            </div>
+
+            <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-6">
+              {isLogin ? (
+                /* LOGIN FORM */
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg border-b pb-2">Account & Personal</h3>
-
                   <div className="space-y-2">
-                    <Label htmlFor="regEmail">Email *</Label>
-                    <Input id="regEmail" type="email" value={registerEmail} onChange={e => setRegisterEmail(e.target.value)} required />
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">KTP Number (NIK) / Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter Email or NIK"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="regPass">Password *</Label>
-                    <Input id="regPass" type="password" value={registerPassword} onChange={e => setRegisterPassword(e.target.value)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="regConfirm">Confirm Password *</Label>
-                    <Input id="regConfirm" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="nik">NIK KTP (16 Digits) *</Label>
-                    <Input id="nik" value={nik} onChange={e => setNik(e.target.value)} maxLength={16} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name *</Label>
-                    <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value)} required />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="dob">Date of Birth *</Label>
-                    <Input id="dob" type="date" value={dateOfBirth} onChange={e => setDateOfBirth(e.target.value)} required />
+                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                    />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Gender *</Label>
-                    <RadioGroup value={gender} onValueChange={setGender} required className="flex gap-4">
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="male" id="male" />
-                        <Label htmlFor="male">Male</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="female" id="female" />
-                        <Label htmlFor="female">Female</Label>
-                      </div>
-                    </RadioGroup>
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
+                      Forgot Password?
+                    </button>
                   </div>
                 </div>
-
-                {/* RIGHT COLUMN: Details & Docs */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-lg border-b pb-2">Experience & Documents</h3>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="address">Residential Address *</Label>
-                    <Input id="address" value={residentialAddress} onChange={e => setResidentialAddress(e.target.value)} required />
+              ) : (
+                /* REGISTER FORM */
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* SAME REGISTER FIELDS BUT STYLED */}
+                  <div className="space-y-4">
+                    {/* Account & Personal */}
+                    <div className="space-y-2">
+                      <Label htmlFor="regEmail">Email *</Label>
+                      <Input
+                        id="regEmail"
+                        type="email"
+                        value={registerEmail}
+                        onChange={e => setRegisterEmail(e.target.value)}
+                        required
+                        className="bg-gray-50 border-gray-200"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="nik">NIK KTP (16 Digits) *</Label>
+                      <Input id="nik" value={nik} onChange={e => setNik(e.target.value)} maxLength={16} required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="fullName">Full Name *</Label>
+                      <Input id="fullName" value={fullName} onChange={e => setFullName(e.target.value.toUpperCase())} required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="regPass">Password *</Label>
+                      <Input id="regPass" type="password" value={registerPassword} onChange={e => setRegisterPassword(e.target.value)} required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="regConfirm">Confirm Password *</Label>
+                      <Input id="regConfirm" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required className="bg-gray-50 border-gray-200" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City & Province *</Label>
-                    <Input id="city" value={cityProvince} onChange={e => setCityProvince(e.target.value)} placeholder="e.g. Magelang-Jawa Tengah" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="whatsapp">WhatsApp Number *</Label>
-                    <Input id="whatsapp" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} type="tel" required />
+
+                  <div className="space-y-4">
+                    {/* Details */}
+                    <div className="space-y-2">
+                      <Label htmlFor="whatsapp">WhatsApp Number *</Label>
+                      <Input id="whatsapp" value={whatsappNumber} onChange={e => setWhatsappNumber(e.target.value)} type="tel" required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="dob">Date of Birth *</Label>
+                      <Input id="dob" type="date" value={dateOfBirth} onChange={e => setDateOfBirth(e.target.value)} required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Gender *</Label>
+                      <Select value={gender} onValueChange={setGender} required>
+                        <SelectTrigger className="bg-gray-50 border-gray-200">
+                          <SelectValue placeholder="Select Gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="city">City & Province *</Label>
+                      <Input id="city" value={cityProvince} onChange={e => setCityProvince(e.target.value.toUpperCase())} placeholder="e.g. Jakarta" required className="bg-gray-50 border-gray-200" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="address">Address *</Label>
+                      <Input id="address" value={residentialAddress} onChange={e => setResidentialAddress(e.target.value.toUpperCase())} required className="bg-gray-50 border-gray-200" />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="salary">Expected Salary *</Label>
-                    <Input id="salary" value={expectedSalary} onChange={e => setExpectedSalary(e.target.value)} placeholder="e.g. 5500000" required />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Automotive Experience?</Label>
-                    <RadioGroup value={hasAutomotiveExperience} onValueChange={setHasAutomotiveExperience} required className="flex gap-4">
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="expYes" />
-                        <Label htmlFor="expYes">Yes</Label>
+                  {/* Full width fields for complex sections */}
+                  <div className="col-span-1 md:col-span-2 space-y-4 border-t pt-4 mt-2">
+                    <h3 className="font-semibold text-gray-900">Experience & Education</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="salary">Expected Salary *</Label>
+                        <Input id="salary" value={expectedSalary} onChange={e => setExpectedSalary(e.target.value)} required className="bg-gray-50 border-gray-200" />
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="expNo" />
-                        <Label htmlFor="expNo">No</Label>
+                      <div className="space-y-2">
+                        <Label>Education Level *</Label>
+                        <Select value={educationLevel} onValueChange={setEducationLevel} required>
+                          <SelectTrigger className="bg-gray-50 border-gray-200"><SelectValue placeholder="Select Level" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sma">SMA/SMK</SelectItem>
+                            <SelectItem value="d3">D3</SelectItem>
+                            <SelectItem value="s1">S1</SelectItem>
+                            <SelectItem value="s2">S2</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    </RadioGroup>
+                      <div className="space-y-2">
+                        <Label>Experience Duration *</Label>
+                        <Select value={workExperienceDuration} onValueChange={setWorkExperienceDuration} required>
+                          <SelectTrigger className="bg-gray-50 border-gray-200"><SelectValue placeholder="Select Duration" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="<1">&lt; 1 Year</SelectItem>
+                            <SelectItem value="1-3">1 - 3 Years</SelectItem>
+                            <SelectItem value="3-5">3 - 5 Years</SelectItem>
+                            <SelectItem value=">5">&gt; 5 Years</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Automotive Experience? *</Label>
+                        <Select value={hasAutomotiveExperience} onValueChange={setHasAutomotiveExperience} required>
+                          <SelectTrigger className="bg-gray-50 border-gray-200"><SelectValue placeholder="Select..." /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Experience Duration</Label>
-                    <Select value={workExperienceDuration} onValueChange={setWorkExperienceDuration} required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select duration" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="<1">&lt;1 Year</SelectItem>
-                        <SelectItem value="1-3">1-3 Years</SelectItem>
-                        <SelectItem value="3-5">3-5 Years</SelectItem>
-                        <SelectItem value=">5">&gt;5 Years</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="col-span-1 md:col-span-2 space-y-4 border-t pt-4">
+                    <h3 className="font-semibold text-gray-900">Documents</h3>
+                    <div className="space-y-2">
+                      <Label>CV (PDF, Max 5MB) *</Label>
+                      <Input type="file" accept=".pdf" onChange={e => setCvFile(e.target.files?.[0] || null)} required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Experience Certificate / Paklaring (PDF) *</Label>
+                      <Input type="file" accept=".pdf" onChange={e => setPaklaringFile(e.target.files?.[0] || null)} required className="bg-gray-50 border-gray-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Passport Photo (Image) *</Label>
+                      <Input type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files?.[0] || null)} required className="bg-gray-50 border-gray-200" />
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Education</Label>
-                    <Select value={educationLevel} onValueChange={setEducationLevel} required>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select education" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sma">SMA / SMK</SelectItem>
-                        <SelectItem value="d3">D3</SelectItem>
-                        <SelectItem value="s1">S1</SelectItem>
-                        <SelectItem value="s2">S2</SelectItem>
-                        <SelectItem value="s3">S3</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                </div>
+              )}
 
-                  <div className="space-y-2">
-                    <Label>CV (PDF, Max 5MB) *</Label>
-                    <Input type="file" accept=".pdf" onChange={e => setCvFile(e.target.files?.[0] || null)} required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Paklaring / Ijazah (PDF, Max 5MB) *</Label>
-                    <Input type="file" accept=".pdf" onChange={e => setPaklaringFile(e.target.files?.[0] || null)} required />
-                  </div>
+              <div className="space-y-4 pt-2">
+                <Button type="submit" className="w-full h-11 text-base font-semibold" disabled={loading}>
+                  {loading ? "Processing..." : isLogin ? "Login" : "Register"}
+                </Button>
 
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-sm font-bold text-primary">
+                    {isLogin ? "Don't have an account?" : "Already have an account?"}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="default"
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="bg-primary hover:bg-primary/90 text-white min-w-[100px]"
+                  >
+                    {isLogin ? "Register" : "Login"}
+                  </Button>
                 </div>
               </div>
-            )}
+            </form>
 
-            <Button type="submit" className="w-full mt-6" disabled={loading}>
-              {loading ? "Processing..." : isLogin ? "Login" : "Register & Create Profile"}
-            </Button>
 
-            <div className="text-center text-sm pt-4">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:underline"
-              >
-                {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
+      <Footer />
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset Password</DialogTitle>
+            <DialogDescription>
+              Enter your email address and we'll send you a link to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleForgotPassword} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="resetEmail">Email</Label>
+              <Input
+                id="resetEmail"
+                type="email"
+                placeholder="Enter your email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowForgotPassword(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={resetLoading}>
+                {resetLoading ? "Sending..." : "Send Reset Link"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

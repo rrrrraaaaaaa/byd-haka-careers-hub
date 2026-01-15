@@ -1,23 +1,37 @@
+
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import TopNav from "@/components/TopNav";
-import FilterSidebar from "@/components/FilterSidebar";
-import JobHeader from "@/components/JobHeader";
-import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { JobCard } from "@/components/JobCard";
-import { JobDetail } from "@/components/JobDetail";
-import { jobsData } from "@/data/jobsData";
 import { useToast } from "@/hooks/use-toast";
 import { Briefcase } from "lucide-react";
+import FilterBar from "@/components/FilterBar";
+import heroBg from "@/assets/job-board-hero-new.jpg";
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 15;
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedJob, setSelectedJob] = useState<string | null>(null);
+  const [jobs, setJobs] = useState<any[]>([]);
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const [filters, setFilters] = useState({
     province: "All Provinces",
     branch: "All Branches",
@@ -25,24 +39,70 @@ const Index = () => {
   });
 
   useEffect(() => {
+    const checkAdmin = async (userId: string) => {
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      setIsAdmin(!!roleData);
+    };
+
+    const fetchJobs = async () => {
+      const { data, error } = await (supabase as any)
+        .from("jobs")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching jobs:", error);
+        toast({
+          title: "Error fetching jobs",
+          description: "Could not load job listings.",
+          variant: "destructive"
+        });
+      } else {
+        setJobs(data || []);
+      }
+      setLoading(false);
+    }
+
+    // Auth Check
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      setLoading(false);
+      if (session?.user) {
+        checkAdmin(session.user.id);
+      } else {
+        setIsAdmin(false);
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      setLoading(false);
+      if (session?.user) {
+        checkAdmin(session.user.id);
+      }
       if (!session) {
         navigate("/auth");
       }
     });
 
+    // Fetch jobs immediately
+    fetchJobs();
+
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
   const filteredJobs = useMemo(() => {
-    return jobsData.filter((job) => {
+    return jobs.filter((job) => {
       const matchProvince =
         filters.province === "All Provinces" || job.province === filters.province;
       const matchBranch =
@@ -52,31 +112,26 @@ const Index = () => {
 
       return matchProvince && matchBranch && matchPosition;
     });
-  }, [filters]);
+  }, [filters, jobs]); // Added jobs to dependency
+
+  // Calculate Pagination
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+  const paginatedJobs = filteredJobs.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleJobDetail = (jobId: string) => {
-    setSelectedJob(jobId);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigate(`/job-board/${jobId}`);
   };
 
-  const handleBackToJobs = () => {
-    setSelectedJob(null);
-  };
-
-  const handleApply = () => {
-    toast({
-      title: "Apply for Position",
-      description: "Redirecting to application form...",
-    });
-    // Navigate to application form page
-    navigate("/application-form");
-  };
-
-  const selectedJobData = selectedJob 
-    ? jobsData.find(job => job.id === selectedJob)
-    : null;
-
-  // All 34 Indonesian provinces
+  // Provinces (Derived from jobs to only show relevant ones, or stick to static list? 
+  // Sticking to static list ensures UI consistency even if no jobs in that region yet)
   const provinces = [
     "Aceh",
     "Bali",
@@ -115,22 +170,25 @@ const Index = () => {
     "Sulawesi Utara",
     "Sumatera Barat",
     "Sumatera Selatan",
-    "Sumatera Utara"
+    "Sumatera Utara",
   ];
+
+  // Dynamic Branches based on fetched jobs
   const branches = useMemo(() => {
     if (filters.province === "All Provinces") {
-      return Array.from(new Set(jobsData.map((job) => job.branch))).sort();
+      return Array.from(new Set(jobs.map((job) => job.branch))).sort();
     }
     return Array.from(
       new Set(
-        jobsData
+        jobs
           .filter((job) => job.province === filters.province)
           .map((job) => job.branch)
       )
     ).sort();
-  }, [filters.province]);
+  }, [filters.province, jobs]);
 
-  const positions = Array.from(new Set(jobsData.map((job) => job.position))).sort();
+  // Dynamic Positions based on fetched jobs
+  const positions = Array.from(new Set(jobs.map((job) => job.position))).sort();
 
   if (loading) {
     return (
@@ -145,125 +203,161 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <TopNav isPublic={false} />
 
-      <div className="flex flex-col lg:flex-row">
-        {/* Left Sidebar - Filters - Sticky */}
-        <div className="hidden lg:block lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
-          <FilterSidebar
-            selectedProvince={filters.province}
-            selectedBranch={filters.branch}
-            selectedPosition={filters.position}
-            onProvinceChange={(value) => setFilters({ ...filters, province: value, branch: "All Branches" })}
-            onBranchChange={(value) => setFilters({ ...filters, branch: value })}
-            onPositionChange={(value) => setFilters({ ...filters, position: value })}
-            provinces={provinces}
-            branches={branches}
-            positions={positions}
+      {/* Hero Section */}
+      <div className="relative py-12 pb-24 px-4 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src={heroBg}
+            alt="Hero Background"
+            className="w-full h-full object-cover"
           />
+          {/* Green Overlay - Using teal/emerald mix to match brand but darken image */}
+          <div className="absolute inset-0 bg-[#00A572]/90 mix-blend-multiply" />
+          {/* Gradient to ensure text separation if needed, or just the color overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
         </div>
 
-        {/* Main Content */}
-        <main className="flex-1 w-full overflow-auto">
-          <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-            {!selectedJob && (
-              <>
-                {/* Header */}
-                <JobHeader />
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none z-10" />
 
-                {/* Welcome Banner */}
-                <WelcomeBanner />
-              </>
-            )}
+        <div className="max-w-7xl mx-auto space-y-4 relative z-10 text-white">
+          <h1 className="text-3xl md:text-4xl font-bold">Careers</h1>
+          <p className="max-w-2xl text-white/90 text-lg">
+            We open equal opportunities for both young talents and professionals. Choose the category that suits your work experience!
+          </p>
+        </div>
+      </div>
 
-            {/* Show Job Detail or Job List */}
-            {selectedJob && selectedJobData ? (
-              <JobDetail
-                position={selectedJobData.position}
-                branch={selectedJobData.branch}
-                location={selectedJobData.location}
-                onBack={handleBackToJobs}
-                onApply={handleApply}
-              />
-            ) : (
-              <>
-                {/* Mobile Filters */}
-                <div className="lg:hidden space-y-4 p-4 bg-card rounded-lg border animate-fade-in">
-                  <h3 className="font-semibold text-base sm:text-lg mb-4">Filter Jobs</h3>
-                  <FilterSidebar
-                    selectedProvince={filters.province}
-                    selectedBranch={filters.branch}
-                    selectedPosition={filters.position}
-                    onProvinceChange={(value) => setFilters({ ...filters, province: value, branch: "All Branches" })}
-                    onBranchChange={(value) => setFilters({ ...filters, branch: value })}
-                    onPositionChange={(value) => setFilters({ ...filters, position: value })}
-                    provinces={provinces}
-                    branches={branches}
-                    positions={positions}
+      {/* Main Content with overlapping FilterBar */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20 pb-12">
+        <FilterBar
+          selectedProvince={filters.province}
+          selectedBranch={filters.branch}
+          selectedPosition={filters.position}
+          onProvinceChange={(value) =>
+            setFilters({ ...filters, province: value, branch: "All Branches" })
+          }
+          onBranchChange={(value) => setFilters({ ...filters, branch: value })}
+          onPositionChange={(value) => setFilters({ ...filters, position: value })}
+          provinces={provinces}
+          branches={branches}
+          positions={positions}
+        />
+
+        <div className="mt-8 space-y-6">
+          {/* Results Count & Header */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-800">
+              ({filteredJobs.length}) Jobs available
+            </h2>
+          </div>
+
+          {/* Job Grid - UPDATED TO 4 COLUMNS (xl:grid-cols-4) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedJobs.length > 0 ? (
+              paginatedJobs.map((job, index) => (
+                <div
+                  key={job.id}
+                  style={{
+                    animationDelay: `${index * 50}ms`,
+                  }}
+                >
+                  <JobCard
+                    position={job.position}
+                    branch={job.branch}
+                    location={job.location}
+                    province={job.province}
+                    type={job.type}
+                    onDetail={() => handleJobDetail(job.id)}
+                    isAdmin={isAdmin}
                   />
                 </div>
-
-                {/* Job Board Section */}
-                <section className="space-y-4 sm:space-y-6">
-                  {/* Section Header with Green Indicator */}
-                  <div className="flex items-center gap-3 animate-fade-in">
-                    <div className="h-6 sm:h-8 w-1 sm:w-1.5 bg-byd-green rounded-full" />
-                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">Job Board</h2>
-                  </div>
-
-                  {/* Results Count */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 animate-fade-in">
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Showing <span className="font-semibold text-foreground">{filteredJobs.length}</span> opportunities
-                    </p>
-                    {filters.province !== "All Provinces" && (
-                      <p className="text-xs sm:text-sm text-primary font-medium">
-                        Filtered by: {filters.province}
-                        {filters.branch !== "All Branches" && ` → ${filters.branch}`}
-                        {filters.position !== "All Positions" && ` → ${filters.position}`}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Job Cards Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-                    {filteredJobs.length > 0 ? (
-                      filteredJobs.map((job, index) => (
-                        <div
-                          key={job.id}
-                          style={{
-                            animationDelay: `${index * 50}ms`,
-                          }}
-                        >
-                          <JobCard
-                            position={job.position}
-                            branch={job.branch}
-                            location={job.location}
-                            province={job.province}
-                            type={job.type}
-                            onDetail={() => handleJobDetail(job.id)}
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <div className="col-span-full flex flex-col items-center justify-center py-12 sm:py-16 text-center animate-fade-in">
-                        <Briefcase className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-muted-foreground mb-4 opacity-50" />
-                        <h3 className="text-lg sm:text-xl font-semibold text-muted-foreground mb-2">
-                          No jobs found
-                        </h3>
-                        <p className="text-sm sm:text-base text-muted-foreground">
-                          Try changing your filters to see other positions
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </section>
-              </>
+              ))
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center bg-white rounded-lg border border-gray-100 shadow-sm">
+                <Briefcase className="h-16 w-16 text-gray-300 mb-4" />
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  No job vacancies found
+                </h3>
+                <p className="text-gray-500">
+                  {jobs.length === 0
+                    ? "No active job vacancies at the moment."
+                    : "Try changing your search filters to see other positions"
+                  }
+                </p>
+              </div>
             )}
           </div>
-        </main>
-      </div>
+
+          {/* Pagination Controls */}
+          {filteredJobs.length > ITEMS_PER_PAGE && (
+            <div className="flex justify-center mt-8">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) handlePageChange(currentPage - 1);
+                      }}
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+
+                  {/* Page Numbers */}
+                  {Array.from({ length: totalPages }).map((_, i) => {
+                    const page = i + 1;
+                    if (totalPages > 10 && Math.abs(currentPage - page) > 2 && page !== 1 && page !== totalPages) {
+                      if (Math.abs(currentPage - page) === 3) return <PaginationItem key={page}><span className="px-2">...</span></PaginationItem>;
+                      return null;
+                    }
+
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === page}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(page);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                      }}
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : "cursor-pointer"
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
