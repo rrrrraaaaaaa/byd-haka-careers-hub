@@ -49,6 +49,7 @@ export default function ProfilePage() {
     const [activeSection, setActiveSection] = useState<string>("biodata");
     const [cacheBuster, setCacheBuster] = useState(Date.now());
     const [stats, setStats] = useState({ applicants: 0, jobs: 0, pending: 0 });
+    const [educationCount, setEducationCount] = useState(0);
 
     // Sidebar menu items (static for visual reference)
     const menuItems = [
@@ -56,7 +57,7 @@ export default function ProfilePage() {
         { icon: GraduationCap, label: "Education" },
         { icon: Briefcase, label: "Experience & Organization" },
         { icon: Users, label: "Family" },
-        { icon: Heart, label: "Experience & Work Interest" },
+        { icon: Heart, label: "Experience" },
         { icon: FileText, label: "Others" },
     ];
 
@@ -165,6 +166,15 @@ export default function ProfilePage() {
                         info_source: meta.info_source || null,
                     });
                 }
+
+                // Check Education Data
+                const { count: eduCount } = await supabase
+                    .from('profile_educations' as any)
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id);
+
+                setEducationCount(eduCount || 0);
+
             } catch (error) {
                 console.error("Error:", error);
             } finally {
@@ -376,7 +386,8 @@ export default function ProfilePage() {
             profile.has_automotive_experience !== null ? "ok" : null,
             profile.cv_url,
             profile.certificate_url,
-            profile.info_source
+            profile.info_source,
+            educationCount > 0 ? "ok" : null // Check actual education entries
         ];
 
         const isFilled = (val: any) => {
@@ -388,8 +399,8 @@ export default function ProfilePage() {
         };
 
         const filled = fields.filter(isFilled).length;
-        // Total fields = 16. strict calculation.
-        return Math.min(100, Math.round((filled / 16) * 100));
+        // Total fields = 17 (added education entries). strict calculation.
+        return Math.min(100, Math.round((filled / 17) * 100));
     };
 
     const completeness = calculateCompleteness();
@@ -448,7 +459,7 @@ export default function ProfilePage() {
                                 <>
                                     <SidebarItem id="biodata" label="Personal Info" icon={User} active={activeSection === "biodata"} />
                                     <SidebarItem id="education" label="Education" icon={GraduationCap} active={activeSection === "education"} />
-                                    <SidebarItem id="experience" label="Experience & Work Interest" icon={Briefcase} active={activeSection === "experience"} />
+                                    <SidebarItem id="experience" label="Experience" icon={Briefcase} active={activeSection === "experience"} />
                                 </>
                             )}
                         </div>

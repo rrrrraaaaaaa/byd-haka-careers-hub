@@ -179,19 +179,17 @@ export default function Auth() {
     e.preventDefault();
 
     // Custom validation for files
-    if (!isLogin) {
-      if (!cvFile) {
-        toast.error("Please upload your CV");
-        return;
-      }
-      if (!paklaringFile) {
-        toast.error("Please upload your Paklaring/Certificate");
-        return;
-      }
-      if (!photoFile) {
-        toast.error("Please upload your Pass Foto");
-        return;
-      }
+    if (!cvFile) {
+      toast.error("Please upload your CV");
+      return;
+    }
+    if (!paklaringFile) {
+      toast.error("Please upload your Paklaring/Certificate");
+      return;
+    }
+    if (!photoFile) {
+      toast.error("Please upload your Pass Foto");
+      return;
     }
 
     try {
@@ -216,6 +214,28 @@ export default function Auth() {
 
       setLoading(true);
 
+      // 1. Generate Temp ID for File Uploads (Since we don't have user ID yet)
+      const tempId = self.crypto.randomUUID();
+
+      // 2. Upload Files FIRST
+      let cvUrl = "";
+      let paklaringUrl = "";
+      let photoUrl = "";
+
+      try {
+        // Upload immediately using the temp ID
+        // Note: RLS must allow public INSERT for this to work
+        cvUrl = await uploadFile(tempId, cvFile!, 'cv', 'application-documents');
+        paklaringUrl = await uploadFile(tempId, paklaringFile!, 'certificate', 'application-documents');
+        photoUrl = await uploadFile(tempId, photoFile!, 'photos', 'avatars');
+
+      } catch (fileError: any) {
+        console.error("Pre-registration file upload failed:", fileError);
+        toast.error(`File upload failed: ${fileError.message}. Please try again.`);
+        setLoading(false);
+        return; // Stop registration if files fail
+      }
+
       const metadata = {
         nik: validated.nik,
         full_name: validated.fullName,
@@ -228,6 +248,11 @@ export default function Auth() {
         has_automotive_experience: validated.hasAutomotiveExperience,
         work_experience_duration: validated.workExperienceDuration,
         education_level: validated.educationLevel,
+        // Pass the uploaded file URLs to metadata
+        cv_url: cvUrl,
+        certificate_url: paklaringUrl,
+        avatar_url: photoUrl,
+        info_source: "website",
       };
 
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -241,47 +266,9 @@ export default function Auth() {
       if (authError) throw authError;
 
       if (authData.user) {
-        // 2. Upload Files (Only if session is active)
-        if (authData.session) {
-          try {
-            const cvUrl = await uploadFile(authData.user.id, cvFile!, 'cv', 'application-documents');
-            const paklaringUrl = await uploadFile(authData.user.id, paklaringFile!, 'certificate', 'application-documents');
-            const photoUrl = await uploadFile(authData.user.id, photoFile!, 'photos', 'avatars');
-
-            // 3. Update Profile with File URLs
-            // We also update user_metadata so handle_new_user trigger works or client-side fallback works
-            const { error: updateError } = await supabase.auth.updateUser({
-              data: {
-                cv_url: cvUrl,
-                certificate_url: paklaringUrl,
-                avatar_url: photoUrl
-              }
-            });
-
-            if (updateError) throw updateError;
-
-            // Also explicitly update profiles table just in case
-            await supabase
-              .from('profiles')
-              .update({
-                cv_url: cvUrl,
-                certificate_url: paklaringUrl,
-                avatar_url: photoUrl
-              })
-              .eq('user_id', authData.user.id);
-
-
-            toast.success("Registration successful! Complete.");
-            // Navigate handled by session listener
-          } catch (fileError: any) {
-            console.error("File upload failed:", fileError);
-            toast.success(`Account created, but file upload failed: ${fileError.message}`);
-          }
-        } else {
-          // No session (email verification required)
-          // We cannot upload files yet. User must verify email first.
-          toast.success("Registration successful! Please check your email to verify your account.");
-        }
+        toast.success("Registration successful! Please check your email to verify your account.");
+        // Reset form? Or just wait for redirect logic if applicable, but usually verification is needed.
+        setIsLogin(true); // Switch to login view
       }
 
     } catch (error: any) {
